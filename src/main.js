@@ -129,7 +129,9 @@ async function main() {
 
     // How the current figure turns: keep spinning, or rock like a stage prop.
     const motion = player.active?.motion ?? { spin: 0.5 };
-    if (motion.sway) params.rotY.value = Math.sin(clock * 0.9) * motion.sway * spin;
+    // A rocking figure starts facing the viewer (angle 0 at the keypress) and
+    // swings a little to each side; it never turns all the way around.
+    if (motion.sway) params.rotY.value = Math.sin(player.elapsed * 1.1) * motion.sway * spin;
     else {
       angle += (motion.spin ?? 0.5) * spin * dt;
       params.rotY.value = angle;

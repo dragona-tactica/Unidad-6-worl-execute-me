@@ -38,6 +38,10 @@ export function createCardPlayer({ swarm, count, onStatus }) {
     get active() {
       return active;
     },
+    // seconds since the performer pressed the card's key
+    get elapsed() {
+      return elapsed;
+    },
     prepare,
 
     async trigger(card) {

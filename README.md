@@ -38,7 +38,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `B` | 33 Eggplant | berenjena → pastillas |
 | `T` | 35 Tomato | tomate → cadena de proteínas |
 | `F` | 37 Tabby cat | gato de circo con banjo: modelo 3D (`public/models/banjo_cat.glb`) coloreado con la imagen de referencia |
-| `K` | 39 The only God | el cordero |
+| `K` | 39 The only God | el cordero: modelo 3D (`public/models/sacred_lamb.glb`) coloreado con la imagen, de perfil como la referencia |
 | `X` | 41 Switch my gender | chico → chica → chico |
 | `Q` | 44 From AM to PM | el radio gira la perilla |
 | `1` | 46 To S, to M | ratón → elefante |

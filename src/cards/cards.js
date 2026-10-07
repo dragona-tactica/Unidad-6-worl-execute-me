@@ -232,16 +232,16 @@ export const CARDS = [
     label: 'F · Un gato de circo (modelo 3D)',
     verse: "If I'm a tabby cat",
     stages: [{ figure: 'cat' }],
-    motion: { spin: 0.55 }
+    motion: { sway: 0.38 }
   },
   {
     id: 'lamb',
     short: 'cordero',
     key: 'KeyK',
-    label: 'K · El cordero',
     verse: "If I'm the only God",
     stages: [{ figure: 'lamb' }],
-    motion: { sway: 0.3 }
+    label: 'K · El cordero (modelo 3D)',
+    motion: { sway: 0.38 }
   },
   {
     id: 'gender',

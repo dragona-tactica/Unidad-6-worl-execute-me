@@ -63,6 +63,58 @@ export function canvasSilhouette(width, height, draw) {
   return prepare(ctx.getImageData(0, 0, width, height));
 }
 
+// For every pixel, the index of the closest pixel inside the shape (two-pass
+// chamfer sweep). Lets a point that lands just outside the outline borrow the
+// color of the nearest inside pixel instead of a flat fallback.
+function nearestInside(inside, w, h) {
+  const near = new Int32Array(w * h).fill(-1);
+  const dist = new Float32Array(w * h).fill(1e9);
+  for (let i = 0; i < inside.length; i++) {
+    if (inside[i]) {
+      near[i] = i;
+      dist[i] = 0;
+    }
+  }
+  const relax = (i, x, y, nx, ny, cost) => {
+    if (nx < 0 || ny < 0 || nx >= w || ny >= h) return;
+    const j = ny * w + nx;
+    if (near[j] < 0) return;
+    const sx = near[j] % w;
+    const sy = (near[j] / w) | 0;
+    const d = Math.hypot(sx - x, sy - y);
+    if (d < dist[i]) {
+      dist[i] = d;
+      near[i] = near[j];
+    }
+  };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x;
+    relax(i, x, y, x - 1, y, 1); relax(i, x, y, x, y - 1, 1); relax(i, x, y, x - 1, y - 1, 1.4); relax(i, x, y, x + 1, y - 1, 1.4);
+  }
+  for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) {
+    const i = y * w + x;
+    relax(i, x, y, x + 1, y, 1); relax(i, x, y, x, y + 1, 1); relax(i, x, y, x + 1, y + 1, 1.4); relax(i, x, y, x - 1, y + 1, 1.4);
+  }
+  return near;
+}
+
+// Tint function for a 3D model that has no colors of its own: each point takes
+// the brightness of the picture pixel at its (u, v) position in the model's
+// front view, borrowing from the nearest pixel when it falls outside the outline.
+export function imageTint(sil, { lo = 0.12, hi = 1 } = {}) {
+  const { w, h, data, lumaLow, lumaHigh } = sil;
+  const range = Math.max(1, lumaHigh - lumaLow);
+  const near = sil.near;
+  return (_x, _y, _z, u, v) => {
+    const ix = Math.min(w - 1, Math.max(0, Math.round(u * (w - 1))));
+    const iy = Math.min(h - 1, Math.max(0, Math.round(v * (h - 1))));
+    let i = iy * w + ix;
+    if (data[i * 4 + 3] < 128 && near[i] >= 0) i = near[i];
+    const luma = data[i * 4] * 0.299 + data[i * 4 + 1] * 0.587 + data[i * 4 + 2] * 0.114;
+    return lo + (hi - lo) * Math.min(1, Math.max(0, (luma - lumaLow) / range));
+  };
+}
+
 function prepare(image) {
   const { width: w, height: h, data } = image;
   const inside = new Uint8Array(w * h);
@@ -83,6 +135,7 @@ function prepare(image) {
     data,
     pixels,
     dist: distanceToEdge(inside, w, h),
+    near: nearestInside(inside, w, h),
     lumaLow: pick(0.04),
     lumaHigh: pick(0.96)
   };
