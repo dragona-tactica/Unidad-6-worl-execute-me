@@ -177,6 +177,9 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
 
   return {
     count,
+    setBlendTime(seconds) {
+      params.blendTime.value = seconds;
+    },
     // 0..1: how recently the swarm was told to move (see main.js, afterglow).
     get agitation() {
       return agitation;

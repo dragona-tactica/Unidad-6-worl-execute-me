@@ -50,6 +50,19 @@ function distanceToEdge(inside, w, h) {
   return d;
 }
 
+// A silhouette drawn on a canvas instead of loaded from an image (puzzle
+// pieces, flip-clock tiles...). Everything is white; color it with `tint`
+// or `lo`/`hi` in silhouettePart.
+export function canvasSilhouette(width, height, draw) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.fillStyle = '#fff';
+  draw(ctx, width, height);
+  return prepare(ctx.getImageData(0, 0, width, height));
+}
+
 function prepare(image) {
   const { width: w, height: h, data } = image;
   const inside = new Uint8Array(w * h);
@@ -85,9 +98,10 @@ function prepare(image) {
 //   boost   particle share
 //   flat    true for a thin sheet instead of a slab
 export function silhouettePart(sil, opts = {}) {
-  const { height = 2, depth = 0.12, lo = 0.3, hi = 1, invert = false, tintFn, pos = [0, 0, 0], boost = 1, flat = false, mirror = false } = opts;
   const { w, h, data, pixels, dist, lumaLow, lumaHigh } = sil;
-  const px = height / h;
+  // `fit` sets the size of the longest side; `height` sets the height directly.
+  const { height = opts.fit ? (opts.fit * h) / Math.max(w, h) : 2, depth = 0.12, lo = 0.3, hi = 1, invert = false, tintFn, pos = [0, 0, 0], boost = 1, flat = false, mirror = false, scale = 1 } = opts;
+  const px = (height * scale) / h;
   const width = w * px;
   const range = Math.max(1, lumaHigh - lumaLow);
 
@@ -99,7 +113,7 @@ export function silhouettePart(sil, opts = {}) {
       const iy = (i / w) | 0;
       let x = ((ix + rng()) / w - 0.5) * width;
       if (mirror) x = -x;
-      const y = (0.5 - (iy + rng()) / h) * height;
+      const y = (0.5 - (iy + rng()) / h) * height * scale;
       const edge = dist[i] * px; // world distance to the outline
       const round = depth * Math.sqrt(1 - Math.pow(1 - Math.min(edge / depth, 1), 2));
       const z = flat ? 0 : (rng() < 0.5 ? -round : round);
@@ -114,7 +128,7 @@ export function silhouettePart(sil, opts = {}) {
         if (invert) t = 1 - t;
         tint = lo + (hi - lo) * t;
       }
-      return [x + pos[0], y + pos[1], z + pos[2], tint];
+      return [x + pos[0], y + pos[1], z * scale + pos[2], tint];
     }
   };
 }

@@ -53,7 +53,10 @@ def first_mask(img, cfg):
         return np.linalg.norm(rgb - bg, axis=-1) > thr
     if mode == 'expr':
         hsv = rgb_to_hsv(rgb)
+        border = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]])
+        bgc = np.median(border, axis=0)
         env = {
+            'bgd': np.linalg.norm(rgb - bgc, axis=-1),
             'r': rgb[..., 0], 'g': rgb[..., 1], 'b': rgb[..., 2], 'luma': luma, 'alpha': alpha,
             'h': hsv[..., 0] * 360 / 255, 's': hsv[..., 1] / 255, 'v': hsv[..., 2] / 255, 'np': np
         }
@@ -68,7 +71,14 @@ def refine(mask, cfg):
         mask = ndi.binary_erosion(mask, disk(max(1, cfg['line'] - 1)))
     if cfg.get('close'):
         mask = ndi.binary_closing(mask, disk(cfg['close']))
-    if cfg.get('fill', True):
+    if cfg.get('fill_max'):  # fill only small holes (balls of a molecule), not the big gaps between them
+        labels, n = ndi.label(~mask)
+        edge = set(np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]])))
+        sizes = ndi.sum(~mask, labels, range(1, n + 1))
+        for i, size in enumerate(sizes, start=1):
+            if i not in edge and size < cfg['fill_max']:
+                mask[labels == i] = True
+    elif cfg.get('fill', True):
         mask = ndi.binary_fill_holes(mask)
     if cfg.get('open'):
         mask = ndi.binary_opening(mask, disk(cfg['open']))
@@ -105,7 +115,8 @@ def build(entry):
     if entry.get('half'):  # a split portrait: keep one side and mirror it into a whole figure
         w = img.width
         left = entry['half'] == 'left'
-        half = img.crop((0, 0, w // 2, img.height)) if left else img.crop((w // 2, 0, w, img.height))
+        trim = entry.get('half_trim', 0)
+        half = img.crop((0, 0, w // 2 - trim, img.height)) if left else img.crop((w // 2 + trim, 0, w, img.height))
         mirror = half.transpose(Image.FLIP_LEFT_RIGHT)
         whole = Image.new('RGBA', (half.width * 2, half.height))
         whole.paste(half if left else mirror, (0, 0))

@@ -268,7 +268,14 @@ export function polyline(points, radius, tint = 0.5, boost = 1) {
   return out;
 }
 
-export function sampleParts(list, N, rng) {
+export function sampleParts(input, N, rng) {
+  // a figure may nest groups of parts; flatten, and refuse parts that would poison the weights
+  const list = input.flat(Infinity);
+  list.forEach((part, i) => {
+    if (!part || !Number.isFinite(part.weight) || typeof part.sample !== 'function') {
+      throw new Error(`Parte ${i} inválida en una figura (peso ${part?.weight})`);
+    }
+  });
   const cumulative = new Float64Array(list.length);
   let total = 0;
   list.forEach((p, i) => {

@@ -49,6 +49,7 @@ export function createCardPlayer({ swarm, count, onStatus }) {
       active = card;
       elapsed = 0;
       nextStage = 1;
+      swarm.setBlendTime(card.blendTime ?? 0.4);
       swarm.begin(figures[0]);
       const sources = [...new Set(loaded.map((f) => f.source))].join(', ');
       onStatus?.(`${card.label}  [${sources}]`);

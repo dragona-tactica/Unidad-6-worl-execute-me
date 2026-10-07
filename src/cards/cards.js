@@ -158,5 +158,242 @@ export const CARDS = [
     stages: [{ figure: 'trex' }, { figure: 'robot', at: 1.0 }],
     sweep: 0.85,
     motion: { sway: 0.4 }
+  },
+  {
+    id: 'deep',
+    short: 'submarino',
+    key: 'KeyU',
+    label: 'U · Un submarino desciende hacia el calamar',
+    verse: 'So deeply, so deeply',
+    stages: [{ figure: 'squid_deep' }, { figure: 'squid_lit', at: 0.9 }],
+    sweep: 0.7,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'simulations',
+    short: 'pantallas',
+    key: 'KeyA',
+    label: 'A · Pantallas y simulaciones saliendo de ellas',
+    verse: 'Give you all the simulations',
+    stages: [{ figure: 'computer' }],
+    motion: { sway: 0.4 }
+  },
+  {
+    id: 'vr',
+    short: 'cabeza VR',
+    key: 'KeyY',
+    label: 'Y · Una cabeza con gafas de realidad virtual',
+    verse: 'Be your only satisfaction',
+    stages: [{ figure: 'vr_head' }],
+    motion: { sway: 0.5 }
+  },
+  {
+    id: 'fox',
+    short: 'zorro',
+    key: 'KeyZ',
+    label: 'Z · Un zorro feliz con gafas de sol',
+    verse: 'If I can make you happy',
+    stages: [{ figure: 'fox' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'trap',
+    short: 'trampa',
+    key: 'KeyJ',
+    label: 'J · Trampa para osos y el pie de uno',
+    verse: 'Though we are trapped',
+    stages: [{ figure: 'beartrap' }],
+    motion: { sway: 0.25 }
+  },
+  {
+    id: 'eggplant',
+    short: 'berenjena→pastillas',
+    key: 'KeyB',
+    label: 'B · Berenjena → pastillas',
+    verse: "If I'm an eggplant",
+    stages: [{ figure: 'eggplant' }, { figure: 'pills', at: 0.9 }],
+    sweep: 0.7,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'tomato',
+    short: 'tomate→proteínas',
+    key: 'KeyT',
+    label: 'T · Tomate → cadena de proteínas',
+    verse: "If I'm a tomato",
+    stages: [{ figure: 'tomato' }, { figure: 'molecule', at: 0.9 }],
+    sweep: 0.7,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'cat',
+    short: 'gato',
+    key: 'KeyF',
+    label: 'F · Un gato de circo',
+    verse: "If I'm a tabby cat",
+    stages: [{ figure: 'cat' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'lamb',
+    short: 'cordero',
+    key: 'KeyK',
+    label: 'K · El cordero',
+    verse: "If I'm the only God",
+    stages: [{ figure: 'lamb' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'gender',
+    short: 'chico↔chica',
+    key: 'KeyX',
+    label: 'X · El chico se cambia por la chica y viceversa',
+    verse: 'Switch my gender',
+    stages: [{ figure: 'boy' }, { figure: 'girl', at: 0.7 }, { figure: 'boy', at: 1.45 }],
+    sweep: 0.4,
+    motion: { sway: 0.2 }
+  },
+  {
+    id: 'radio',
+    short: 'radio',
+    key: 'KeyQ',
+    label: 'Q · La perilla del radio cambia de frecuencia',
+    verse: 'From AM to PM',
+    stages: [{ figure: 'radio_am' }, { figure: 'radio_pm', at: 0.9 }],
+    sweep: 0.6,
+    motion: { sway: 0.18 }
+  },
+  {
+    id: 'mouse',
+    short: 'ratón→elefante',
+    key: 'Digit1',
+    label: '1 · El ratón se transforma en elefante',
+    verse: 'To S, to M',
+    stages: [{ figure: 'mouse' }, { figure: 'elephant', at: 0.9 }],
+    sweep: 0.7,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'hole',
+    short: 'agujero',
+    key: 'Digit2',
+    label: '2 · El hombre cae en el agujero',
+    verse: 'The trance, the trance',
+    stages: [{ figure: 'fall' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'vibrations',
+    short: 'vibraciones',
+    key: 'Digit3',
+    label: '3 · Las placas vibran, una a una',
+    verse: 'Feel your vibrations',
+    blendTime: 0.26,
+    sweep: 0.16,
+    stages: [
+      { figure: 'chladni_0' },
+      { figure: 'chladni_1', at: 0.3 },
+      { figure: 'chladni_2', at: 0.66 },
+      { figure: 'chladni_3', at: 1.02 },
+      { figure: 'chladni_4', at: 1.38 },
+      { figure: 'chladni_5', at: 1.74 },
+      { figure: 'chladni_6', at: 2.1 }
+    ],
+    motion: { sway: 0.15 }
+  },
+  {
+    id: 'puzzle',
+    short: 'rompecabezas',
+    key: 'Digit4',
+    label: '4 · Se completa el rompecabezas',
+    verse: 'Finally be completion',
+    stages: [{ figure: 'puzzle_apart' }, { figure: 'puzzle_done', at: 0.9 }],
+    sweep: 0.7,
+    motion: { sway: 0.25 }
+  },
+  {
+    id: 'leave',
+    short: 'gato y tren',
+    key: 'Digit5',
+    label: '5 · El gato y el tren que avanza',
+    verse: 'You have left',
+    stages: [{ figure: 'cat_train_far' }, { figure: 'cat_train_near', at: 0.8 }],
+    sweep: 0.9,
+    motion: { sway: 0.2 }
+  },
+  {
+    id: 'isolation',
+    short: 'tren en el desierto',
+    key: 'Digit6',
+    label: '6 · El tren solo en el desierto',
+    verse: 'You have left me in isolation',
+    stages: [{ figure: 'desert' }],
+    motion: { sway: 0.25 }
+  },
+  {
+    id: 'fragments',
+    short: 'gato roto',
+    key: 'Digit7',
+    label: '7 · La silueta del gato se fragmenta',
+    verse: 'Erase all the pointless fragments',
+    stages: [{ figure: 'cat_whole' }, { figure: 'cat_shattered', at: 0.8 }],
+    sweep: 0.5,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'heart',
+    short: 'corazón',
+    key: 'Digit8',
+    label: '8 · El corazón sangrando',
+    verse: "You won't leave me so disheartened",
+    stages: [{ figure: 'heart_a' }, { figure: 'heart_b', at: 0.8 }],
+    sweep: 0.7,
+    motion: { sway: 0.25 }
+  },
+  {
+    id: 'warden',
+    short: 'guerrero',
+    key: 'Digit9',
+    label: '9 · El guerrero desafía a tu dios',
+    verse: 'Challenging your God',
+    stages: [{ figure: 'warden' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'gavel',
+    short: 'mazo',
+    key: 'Digit0',
+    label: '0 · El mazo de las leyes',
+    verse: 'Illegal arguments',
+    stages: [{ figure: 'gavel' }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'guillotine',
+    short: 'guillotina',
+    key: 'Minus',
+    label: '− · La guillotina y el filo que cae',
+    verse: 'Execution, execution',
+    stages: [{ figure: 'guillotine_up' }, { figure: 'guillotine_down', at: 1.0 }],
+    sweep: 0.3,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'count',
+    short: 'cuenta 1-6',
+    key: 'Equal',
+    label: '= · La cuenta del uno al seis',
+    verse: 'Ein, dos, trios, ne, fem, liu',
+    blendTime: 0.22,
+    sweep: 0.12,
+    stages: [
+      { figure: 'count_1' },
+      { figure: 'count_2', at: 0.4 },
+      { figure: 'count_3', at: 0.8 },
+      { figure: 'count_4', at: 1.2 },
+      { figure: 'count_5', at: 1.6 },
+      { figure: 'count_6', at: 2.0 }
+    ],
+    motion: { sway: 0.2 }
   }
 ];

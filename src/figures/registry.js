@@ -11,6 +11,7 @@ import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
 import { orangeSlice } from './orange.js';
 import { silhouetteFigures } from './silhouettes.js';
+import { squidDeep, squidLit, vrHead, puzzleApart, puzzleDone, guillotineUp, guillotineDown, chladniStage, countStage } from './scenes.js';
 import { sineOnly, sineGrid, rocketStart, rocketMid, rocketEnd, lightning, acdc, confusion } from './math.js';
 
 // FIGURE REGISTRY
@@ -52,6 +53,15 @@ const FIGURES = {
   lightning,
   acdc,
   confusion,
+  squid_deep: squidDeep,
+  squid_lit: squidLit,
+  vr_head: vrHead,
+  puzzle_apart: puzzleApart,
+  puzzle_done: puzzleDone,
+  guillotine_up: guillotineUp,
+  guillotine_down: guillotineDown,
+  ...Object.fromEntries([0, 1, 2, 3, 4, 5, 6].map((k) => [`chladni_${k}`, () => chladniStage(k)])),
+  ...Object.fromEntries([1, 2, 3, 4, 5, 6].map((k) => [`count_${k}`, () => countStage(k)])),
   ...silhouetteFigures
 };
 

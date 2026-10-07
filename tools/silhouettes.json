@@ -1,4 +1,318 @@
 {
-  "trex": { "src": "21 Oh, we can travel/ref 1.jpg", "mode": "dark", "thr": 165, "line": 9, "open": 3, "size": 256 },
-  "robot": { "src": "21 Oh, we can travel/ref 2.jpg", "mode": "bg", "thr": 55, "close": 5, "open": 3, "size": 256 }
+  "trex": {
+    "src": "21 Oh, we can travel/ref 1.jpg",
+    "mode": "dark",
+    "thr": 165,
+    "line": 9,
+    "open": 3,
+    "size": 256
+  },
+  "robot": {
+    "src": "21 Oh, we can travel/ref 2.jpg",
+    "mode": "bg",
+    "thr": 55,
+    "close": 5,
+    "open": 3,
+    "size": 256
+  },
+  "squid": {
+    "src": "24 So deeply, so deeply/ref.jpg",
+    "mode": "expr",
+    "expr": "(bgd>38) & ~((h>35)&(h<80)&(s>0.12)&(v>0.55))",
+    "erase": [
+      [
+        0,
+        440,
+        215,
+        510
+      ],
+      [
+        215,
+        360,
+        445,
+        620
+      ]
+    ],
+    "close": 9,
+    "min_area": 400,
+    "size": 300,
+    "grow": 2
+  },
+  "computer": {
+    "src": "26 Give you all the simulations/referencia.jpg",
+    "mode": "bg",
+    "thr": 28,
+    "close": 3,
+    "open": 2,
+    "size": 300
+  },
+  "fox": {
+    "src": "29 If I can make you happy/referencia.jpg",
+    "mode": "expr",
+    "expr": "(((r>=g-6)&(r>b+10))|(luma<80))",
+    "crop": [
+      130,
+      670,
+      640,
+      1308
+    ],
+    "erase": [
+      [
+        0,
+        480,
+        110,
+        638
+      ],
+      [
+        370,
+        170,
+        520,
+        340
+      ]
+    ],
+    "close": 5,
+    "open": 5,
+    "largest": 1,
+    "size": 260
+  },
+  "beartrap": {
+    "src": "31 Though we are trapped/referencia.jpg",
+    "mode": "dark",
+    "thr": 120,
+    "crop": [
+      340,
+      0,
+      890,
+      1010
+    ],
+    "line": 8,
+    "open": 4,
+    "largest": 4,
+    "size": 280,
+    "min_area": 3000
+  },
+  "eggplant": {
+    "src": "33 If I'm an eggplant/ref 1.jpg",
+    "mode": "bg",
+    "thr": 38,
+    "close": 3,
+    "size": 256
+  },
+  "pills": {
+    "src": "33 If I'm an eggplant/ref 2.jpg",
+    "mode": "dark",
+    "thr": 130,
+    "line": 6,
+    "open": 3,
+    "min_area": 250,
+    "size": 300
+  },
+  "tomato": {
+    "src": "35 If I'm a tomato/ref 1.jpg",
+    "mode": "bg",
+    "thr": 30,
+    "close": 3,
+    "size": 256
+  },
+  "molecule": {
+    "src": "35 If I'm a tomato/ref 2.jpg",
+    "mode": "dark",
+    "thr": 150,
+    "grow": 3,
+    "fill_max": 22000,
+    "min_area": 300,
+    "size": 300
+  },
+  "cat": {
+    "src": "37 If I'm a tabby cat/referencia.png",
+    "mode": "expr",
+    "expr": "(luma<150)|(s>0.28)",
+    "close": 9,
+    "largest": 1,
+    "size": 300
+  },
+  "lamb": {
+    "src": "39 If I'm the only God/ref.jpg",
+    "mode": "dark",
+    "thr": 135,
+    "line": 7,
+    "open": 3,
+    "min_area": 400,
+    "size": 300
+  },
+  "boy": {
+    "src": "41 Switch my gender/ref.png",
+    "mode": "alpha",
+    "thr": 128,
+    "half": "left",
+    "close": 2,
+    "size": 300
+  },
+  "girl": {
+    "src": "41 Switch my gender/ref.png",
+    "mode": "alpha",
+    "thr": 128,
+    "half": "right",
+    "close": 2,
+    "size": 300,
+    "half_trim": 52
+  },
+  "radio": {
+    "src": "44 From AM to PM/REF.jpg",
+    "mode": "bg",
+    "thr": 35,
+    "close": 3,
+    "erase": [
+      [
+        255,
+        380,
+        360,
+        420
+      ]
+    ],
+    "size": 300
+  },
+  "mouse": {
+    "src": "46 To S, to M/referencia 1.jpg",
+    "mode": "dark",
+    "thr": 185,
+    "line": 11,
+    "open": 3,
+    "min_area": 300,
+    "size": 300
+  },
+  "elephant": {
+    "src": "46 To S, to M/referencia 2.jpg",
+    "mode": "dark",
+    "thr": 170,
+    "line": 5,
+    "open": 3,
+    "min_area": 400,
+    "size": 300
+  },
+  "fall": {
+    "src": "48 The trance, the trance/ref.jpg",
+    "mode": "dark",
+    "thr": 110,
+    "crop": [
+      80,
+      270,
+      580,
+      720
+    ],
+    "line": 2,
+    "fill_max": 1500,
+    "min_area": 150,
+    "size": 300
+  },
+  "train": {
+    "src": "52 You have left/referencia.jpg",
+    "mode": "dark",
+    "thr": 95,
+    "crop": [
+      150,
+      270,
+      940,
+      740
+    ],
+    "line": 8,
+    "open": 4,
+    "largest": 1,
+    "size": 300
+  },
+  "desert": {
+    "src": "53 You have left me in isolation/ref.jpg",
+    "mode": "expr",
+    "expr": "(luma<85)",
+    "crop": [
+      0,
+      580,
+      1170,
+      1130
+    ],
+    "close": 2,
+    "min_area": 40,
+    "fill": false,
+    "size": 300
+  },
+  "heart": {
+    "src": "56 You won't leave me so disheartened/ref.jpg",
+    "mode": "dark",
+    "thr": 120,
+    "crop": [
+      100,
+      20,
+      640,
+      800
+    ],
+    "line": 6,
+    "open": 3,
+    "largest": 2,
+    "min_area": 500,
+    "size": 300,
+    "erase": [
+      [
+        0,
+        585,
+        135,
+        760
+      ]
+    ]
+  },
+  "warden": {
+    "src": "57 Challenging your God/ref.jpg",
+    "mode": "dark",
+    "thr": 110,
+    "crop": [
+      20,
+      170,
+      1150,
+      1230
+    ],
+    "erase": [
+      [
+        330,
+        60,
+        360,
+        1050
+      ],
+      [
+        960,
+        60,
+        1010,
+        500
+      ],
+      [
+        960,
+        800,
+        1010,
+        1050
+      ],
+      [
+        300,
+        1015,
+        1010,
+        1050
+      ],
+      [
+        860,
+        980,
+        1020,
+        1080
+      ]
+    ],
+    "line": 8,
+    "open": 4,
+    "largest": 1,
+    "size": 300
+  },
+  "gavel": {
+    "src": "59 Illegal arguments/mazo.jpg",
+    "mode": "dark",
+    "thr": 140,
+    "line": 3,
+    "open": 2,
+    "min_area": 300,
+    "size": 300
+  }
 }

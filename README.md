@@ -7,28 +7,67 @@ persistencia del fósforo) muestra un enjambre de 160 000 partículas que forman
 girando, cada metáfora de la letra. **Nada ocurre solo**: cada metáfora se dispara con una
 tecla y no hay análisis de audio ni secuencias automáticas.
 
-## Cartas actuales: los primeros 10 fragmentos
+## Cartas: todos los fragmentos con referencia
 
 Cada carta sigue la referencia (imagen + indicación) de su carpeta, dura unos 2 s y se
 dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 (violeta profundo → violeta eléctrico → magenta → naranja → durazno).
 
-| Tecla | Fragmento | Qué pasa (figura A → B → C) |
+| Tecla | Fragmento | Qué pasa |
 |---|---|---|
-| `E` | 01 · Switch on the power line | dos mitades de enchufe con sus cables se acercan y se conectan con chispas |
-| `G` | 02 · Remember to put on protection | gafas de laboratorio, una sola pieza sólida (silueta) |
-| `S` | 03 · Lay down your pieces | capas de un sándwich en vista explotada → sándwich armado |
-| `H` | 04 · And let's begin object creation | cuerpo humano → esqueleto → galaxia espiral |
-| `M` | 05 · Fill in my data parameters | líneas de construcción y espiral → mariposas que la recorren |
-| `I` | 06 · Initialization | un televisor del que sale una mano abierta que te invita (sin animación, solo la imagen final) |
-| `W` | 07 · Set up our new world | el planeta con anillo (el de la primera prueba) |
-| `C` | 08 · And let's begin the simulation | rejilla plana → líneas de campo con garganta (agujero de gusano) |
-| `P` | 09 · If I'm a set of point | punto → plano con ejes y curva → "POINT OF INFLECTION" |
-| `O` | 11 · If I'm a circle | rodaja de naranja con su triángulo punteado y, a un lado, la ecuación "C = 2πr" (sin animación) |
+| `E` | 01 Switch on the power line | enchufe que se conecta con chispas |
+| `G` | 02 Protection | gafas de laboratorio (una sola pieza) |
+| `S` | 03 Lay down your pieces | sándwich en vista explotada → armado |
+| `H` | 04 Object creation | humano → esqueleto → galaxia |
+| `M` | 05 Data parameters | líneas y espiral → mariposas que la recorren |
+| `I` | 06 Initialization | televisor con la mano afuera |
+| `W` | 07 New world | el planeta |
+| `C` | 08 The simulation | rejilla plana → líneas de campo (agujero de gusano) |
+| `P` | 09 Set of point | punto → plano con curva → "POINT OF INFLECTION" |
+| `O` | 11 Circle | rodaja de naranja con triángulo punteado y `C = 2πr` |
+| `N` | 13 Sine wave | la onda → las líneas que la contienen |
+| `R` | 15 Infinity | el cohete avanza por la curva 1/x |
+| `L` | 17 Switch my current | rayo → AC / DC |
+| `V` | 19 Blind my vision | la mitad superior de la pantalla se desenfoca (confusión / claridad) |
+| `D` | 21 Oh, we can travel | dinosaurio → robot humanoide |
+| `U` | 24 So deeply | submarino y su haz de luz frente al calamar |
+| `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
+| `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |
+| `Z` | 29 Make you happy | zorro con gafas de sol |
+| `J` | 31 Though we are trapped | trampa para osos y el pie de uno |
+| `B` | 33 Eggplant | berenjena → pastillas |
+| `T` | 35 Tomato | tomate → cadena de proteínas |
+| `F` | 37 Tabby cat | gato de circo |
+| `K` | 39 The only God | el cordero |
+| `X` | 41 Switch my gender | chico → chica → chico |
+| `Q` | 44 From AM to PM | el radio gira la perilla |
+| `1` | 46 To S, to M | ratón → elefante |
+| `2` | 48 The trance | el hombre cae en el agujero |
+| `3` | 49 Feel your vibrations | seis placas vibran, una a una |
+| `4` | 50 Finally be completion | se completa el rompecabezas |
+| `5` | 52 You have left | el gato y el tren que avanza |
+| `6` | 53 In isolation | el tren solo en el desierto |
+| `7` | 54 Pointless fragments | la silueta del gato se fragmenta |
+| `8` | 56 Disheartened | el corazón sangrando |
+| `9` | 57 Challenging your God | el guerrero |
+| `0` | 59 Illegal arguments | el mazo |
+| `−` | 60 Execution | la guillotina y el filo que cae |
+| `=` | 61 Ein, dos | la cuenta del uno al seis en varios idiomas |
 
-Los tiempos de cada etapa (`at`, `sweep`) están en `src/cards/cards.js`; ninguna carta pasa
-de ~2.4 s. El movimiento entre figuras no es una animación: son los agentes persiguiendo
-sus nuevos puntos (steering).
+Los fragmentos 64-76 no tienen referencia todavía. Los tiempos de cada etapa (`at`, `sweep`)
+están en `src/cards/cards.js`. El movimiento entre figuras no es una animación: son los
+agentes persiguiendo sus nuevos puntos (steering).
+
+## Cómo salen las figuras de las imágenes
+
+`tools/make_silhouettes.py` recorta cada imagen de referencia en una máscara (receta en
+`tools/silhouettes.json`) y escribe `public/silhouettes/<id>.png`. La página convierte esa
+máscara en un volumen de partículas: el contorno es la silueta y la distancia al borde la
+infla, así que gira como un cuerpo y no como un cartón. Para rehacerlas:
+
+```bash
+SILHOUETTE_SRC="$HOME/Downloads/execute me" python3 tools/make_silhouettes.py
+```
 
 ### Otros controles
 - `espacio`: disolver la figura y volver a la señal (el flow field).
@@ -94,6 +133,7 @@ corre con `.github/workflows/deploy.yml` al hacer push a `main`.
 
 ```
 src/core/      params, flowField, swarm (steering), background (señal), crt (post-proceso)
-src/figures/   sampling (primitivas → puntos), una carpeta-archivo por metáfora (plug.js, body.js…), sampleGLB, registry
+src/figures/   sampling (primitivas → puntos), un archivo por grupo de metáforas, silhouette (imágenes → volumen), shatter, match, sampleGLB, registry
+tools/         make_silhouettes.py + silhouettes.json (imágenes de referencia → máscaras)
 src/cards/     cards.js (la lista de metáforas, sus teclas y tiempos), cardPlayer.js
 ```
