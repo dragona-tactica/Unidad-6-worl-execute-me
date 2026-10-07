@@ -30,7 +30,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `L` | 17 Switch my current | rayo → AC / DC |
 | `V` | 19 Blind my vision | la mitad superior de la pantalla se desenfoca (confusión / claridad) |
 | `D` | 21 Oh, we can travel | dinosaurio → robot humanoide |
-| `U` | 24 So deeply | submarino y su haz de luz frente al calamar |
+| `U` | 24 So deeply | modelo 3D del calamar abisal con el submarino (`public/models/abyssal_encounter.glb`), coloreado con la imagen |
 | `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
 | `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |
 | `Z` | 29 Make you happy | zorro con gafas de sol |

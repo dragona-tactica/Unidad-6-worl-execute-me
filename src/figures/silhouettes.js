@@ -51,6 +51,10 @@ const fromModel = (file, imageId, opts) => async ({ N, rng }) => {
   return { points, source: `glb:${file} + imagen` };
 };
 figures.cat = fromModel('banjo_cat.glb', 'cat', { height: 1.85, lo: 0.12, hi: 1 });
+// The abyss model also contains the submarine and its beam; the picture is the
+// squid alone, so it is lined up on the mantle and head (uv) and everything
+// outside the squid borrows the nearest dark-navy pixel.
+figures.abyss = fromModel('abyssal_encounter.glb', 'squid', { height: 1.85, lo: 0.22, hi: 1, uv: [1.1017, 0.0433, 0.9577, 0.0187] });
 figures.lamb = fromModel('sacred_lamb.glb', 'lamb', { height: 1.8, lo: 0.2, hi: 1, rotate: [0, Math.PI / 2, 0] });
 
 // 52 · the cat in front, the train behind advancing toward us.

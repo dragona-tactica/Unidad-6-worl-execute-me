@@ -101,13 +101,15 @@ function nearestInside(inside, w, h) {
 // Tint function for a 3D model that has no colors of its own: each point takes
 // the brightness of the picture pixel at its (u, v) position in the model's
 // front view, borrowing from the nearest pixel when it falls outside the outline.
-export function imageTint(sil, { lo = 0.12, hi = 1 } = {}) {
+// `uv` = [su, tu, sv, tv] re-maps the front view onto the picture when the
+// model's pose differs a bit from the drawing (u2 = u * su + tu, v2 = v * sv + tv).
+export function imageTint(sil, { lo = 0.12, hi = 1, uv = [1, 0, 1, 0] } = {}) {
   const { w, h, data, lumaLow, lumaHigh } = sil;
   const range = Math.max(1, lumaHigh - lumaLow);
   const near = sil.near;
   return (_x, _y, _z, u, v) => {
-    const ix = Math.min(w - 1, Math.max(0, Math.round(u * (w - 1))));
-    const iy = Math.min(h - 1, Math.max(0, Math.round(v * (h - 1))));
+    const ix = Math.min(w - 1, Math.max(0, Math.round((u * uv[0] + uv[1]) * (w - 1))));
+    const iy = Math.min(h - 1, Math.max(0, Math.round((v * uv[2] + uv[3]) * (h - 1))));
     let i = iy * w + ix;
     if (data[i * 4 + 3] < 128 && near[i] >= 0) i = near[i];
     const luma = data[i * 4] * 0.299 + data[i * 4 + 1] * 0.587 + data[i * 4 + 2] * 0.114;

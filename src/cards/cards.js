@@ -161,16 +161,15 @@ export const CARDS = [
   },
   {
     id: 'deep',
-    short: 'submarino',
+    short: 'submarino y calamar',
     key: 'KeyU',
-    label: 'U · Un submarino desciende hacia el calamar',
+    label: 'U · El submarino ante el calamar abisal (modelo 3D)',
     verse: 'So deeply, so deeply',
-    stages: [{ figure: 'squid_deep' }, { figure: 'squid_lit', at: 0.9 }],
-    sweep: 0.7,
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'abyss' }],
+    motion: { sway: 0.95 }
   },
   {
-    id: 'simulations',
+        id: 'simulations',
     short: 'pantallas',
     key: 'KeyA',
     label: 'A · Pantallas y simulaciones saliendo de ellas',
@@ -232,7 +231,7 @@ export const CARDS = [
     label: 'F · Un gato de circo (modelo 3D)',
     verse: "If I'm a tabby cat",
     stages: [{ figure: 'cat' }],
-    motion: { sway: 0.38 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'lamb',
@@ -241,7 +240,7 @@ export const CARDS = [
     verse: "If I'm the only God",
     stages: [{ figure: 'lamb' }],
     label: 'K · El cordero (modelo 3D)',
-    motion: { sway: 0.38 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'gender',
