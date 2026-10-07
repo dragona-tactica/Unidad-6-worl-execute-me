@@ -5,7 +5,7 @@ import { goggles } from './protection.js';
 import { sandwichExploded, sandwichJoined } from './sandwich.js';
 import { human, skeleton, galaxy } from './body.js';
 import { guideLines, butterfliesA, butterfliesB } from './butterflies.js';
-import { tvOnly, tvHand } from './tvhand.js';
+import { tvHand } from './tvhand.js';
 import { planet } from './world.js';
 import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
@@ -34,7 +34,6 @@ const FIGURES = {
   guide_lines: guideLines,
   butterflies_a: butterfliesA,
   butterflies_b: butterfliesB,
-  tv: tvOnly,
   tv_hand: tvHand,
   planet,
   field_flat: fieldFlat,

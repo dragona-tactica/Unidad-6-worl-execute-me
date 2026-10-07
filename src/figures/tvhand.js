@@ -1,8 +1,8 @@
 import { parts, place, tube, capsule, group } from './sampling.js';
 
 // 06 · Initialization — a hand reaches out of the screen to invite you in
-// (reference: a hand coming out of an old TV). The TV stays put; only the
-// arm and hand appear, so the swarm pushes them out through the glass.
+// (reference: a hand coming out of an old TV). No animation: the card shows
+// only the final picture, the TV with the hand already out of the glass.
 
 function tv() {
   const list = [
@@ -20,10 +20,6 @@ function tv() {
     place(parts.ellipsoid({ radii: [0.28, 0.12, 0.04], tint: 0 }), { pos: [0, -0.08, 0.43], boost: 3.2 })
   ];
   return list;
-}
-
-export function tvOnly() {
-  return group(tv(), { pos: [0, 0, -0.35], scale: 0.78 });
 }
 
 export function tvHand() {

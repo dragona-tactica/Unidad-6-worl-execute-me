@@ -63,8 +63,7 @@ export const CARDS = [
     key: 'KeyI',
     label: 'I · La mano te invita a entrar (inicialización)',
     verse: 'Initialization',
-    stages: [{ figure: 'tv' }, { figure: 'tv_hand', at: 0.9 }],
-    sweep: 0.7,
+    stages: [{ figure: 'tv_hand' }],
     motion: { sway: 0.5 }
   },
   {

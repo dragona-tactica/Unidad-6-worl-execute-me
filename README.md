@@ -20,7 +20,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `S` | 03 · Lay down your pieces | capas de un sándwich en vista explotada → sándwich armado |
 | `H` | 04 · And let's begin object creation | cuerpo humano → esqueleto → galaxia espiral |
 | `M` | 05 · Fill in my data parameters | líneas de construcción y espiral → mariposas que la recorren |
-| `I` | 06 · Initialization | televisor → una mano sale de la pantalla a invitarte |
+| `I` | 06 · Initialization | un televisor del que sale una mano abierta que te invita (sin animación, solo la imagen final) |
 | `W` | 07 · Set up our new world | el planeta con anillo (el de la primera prueba) |
 | `C` | 08 · And let's begin the simulation | rejilla plana → líneas de campo con garganta (agujero de gusano) |
 | `P` | 09 · If I'm a set of point | punto → plano con ejes y curva → "POINT OF INFLECTION" |
