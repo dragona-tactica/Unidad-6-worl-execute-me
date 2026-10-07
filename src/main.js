@@ -60,7 +60,7 @@ async function main() {
   hud.className = 'hud';
   hud.innerHTML = `
     <div id="status">señal</div>
-    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '')}</b> ${c.label.split(' · ')[1]}</span>`).join('')}</div>
+    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=')}</b> ${c.short ?? c.label}</span>`).join('')}</div>
     <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');
@@ -107,6 +107,7 @@ async function main() {
   let spin = 1; // multiplier on the card's own turning, nudged with the arrow keys
   let twist = 0;
   let roll = 0;
+  let blur = 0;
   let angle = 0;
   let clock = 0;
   let last = performance.now();
@@ -138,7 +139,11 @@ async function main() {
     swarm.update(dt);
     // While the swarm is travelling the screen holds on to the glow, so you
     // see trails of particles forming the figure; at rest it stays sharp.
-    crt.persistence.value = 0.5 + 0.28 * swarm.agitation;
+    // Card effects (the screen going out of focus, ...) ease in and out.
+    const wantBlur = player.active?.effects?.blur ?? 0;
+    blur += (wantBlur - blur) * (1 - Math.exp(-dt * 4));
+    crt.blur.value = blur;
+    crt.persistence.value = 0.5 + 0.18 * swarm.agitation;
     background.update();
     orbit.update();
     screen.render();

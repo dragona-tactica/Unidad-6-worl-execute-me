@@ -57,6 +57,17 @@ export function createCRT({ renderer, scene, camera, crt }) {
     const b = tex.sample(sampleUV.sub(shift)).b;
     let color = vec3(r, g, b);
 
+    // Out of focus: the top half of the glass blurs (screen y grows downward).
+    const unfocused = crt.blur.mul(float(1.0).sub(smoothstep(0.34, 0.56, curved.y)));
+    const reach = unfocused.mul(0.014);
+    const squash = screenSize.y.div(screenSize.x);
+    let sum = color;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [0.7, 0.7], [-0.7, 0.7], [0.7, -0.7], [-0.7, -0.7]]) {
+      sum = sum.add(tex.sample(sampleUV.add(vec2(reach.mul(dx * 1.0).mul(squash), reach.mul(dy)))).rgb);
+      sum = sum.add(tex.sample(sampleUV.add(vec2(reach.mul(dx * 2.2).mul(squash), reach.mul(dy * 2.2)))).rgb);
+    }
+    color = mix(color, sum.div(17.0), unfocused.mul(1.4).clamp(0.0, 1.0));
+
     // Scanlines: every other pixel-row darker.
     color = color.mul(float(1.0).sub(mod(cell.y, 2.0).mul(crt.scanline)));
 

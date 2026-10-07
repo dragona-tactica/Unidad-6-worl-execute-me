@@ -1,0 +1,4 @@
+{
+  "trex": { "src": "21 Oh, we can travel/ref 1.jpg", "mode": "dark", "thr": 165, "line": 9, "open": 3, "size": 256 },
+  "robot": { "src": "21 Oh, we can travel/ref 2.jpg", "mode": "bg", "thr": 55, "close": 5, "open": 3, "size": 256 }
+}

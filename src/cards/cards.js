@@ -16,6 +16,7 @@
 export const CARDS = [
   {
     id: 'plug',
+    short: 'enchufe',
     key: 'KeyE',
     label: 'E · Enciende la línea de poder (enchufe)',
     verse: 'Switch on the power line',
@@ -25,6 +26,7 @@ export const CARDS = [
   },
   {
     id: 'protection',
+    short: 'gafas',
     key: 'KeyG',
     label: 'G · Gafas de laboratorio (protección)',
     verse: 'Remember to put on protection',
@@ -33,6 +35,7 @@ export const CARDS = [
   },
   {
     id: 'sandwich',
+    short: 'sándwich',
     key: 'KeyS',
     label: 'S · Sándwich: las piezas se unen',
     verse: 'Lay down your pieces',
@@ -42,6 +45,7 @@ export const CARDS = [
   },
   {
     id: 'creation',
+    short: 'humano→cosmos',
     key: 'KeyH',
     label: 'H · Humano → esqueleto → cosmos (creación)',
     verse: "And let's begin object creation",
@@ -51,6 +55,7 @@ export const CARDS = [
   },
   {
     id: 'parameters',
+    short: 'mariposas',
     key: 'KeyM',
     label: 'M · Líneas y mariposas que las recorren (parámetros)',
     verse: 'Fill in my data parameters',
@@ -60,6 +65,7 @@ export const CARDS = [
   },
   {
     id: 'initialization',
+    short: 'mano',
     key: 'KeyI',
     label: 'I · La mano te invita a entrar (inicialización)',
     verse: 'Initialization',
@@ -68,6 +74,7 @@ export const CARDS = [
   },
   {
     id: 'world',
+    short: 'mundo',
     key: 'KeyW',
     label: 'W · Nuevo mundo',
     verse: 'Set up our new world',
@@ -76,6 +83,7 @@ export const CARDS = [
   },
   {
     id: 'simulation',
+    short: 'campo',
     key: 'KeyC',
     label: 'C · Líneas de campo: comienza la simulación',
     verse: "And let's begin the simulation",
@@ -85,6 +93,7 @@ export const CARDS = [
   },
   {
     id: 'point',
+    short: 'punto',
     key: 'KeyP',
     label: 'P · Punto → plano → letras',
     verse: "If I'm a set of point",
@@ -94,10 +103,60 @@ export const CARDS = [
   },
   {
     id: 'circle',
+    short: 'naranja',
     key: 'KeyO',
     label: 'O · Rodaja de naranja con su triángulo y la ecuación',
     verse: "If I'm a circle",
     stages: [{ figure: 'orange_slice' }],
     motion: { sway: 0.22 }
+  },
+  {
+    id: 'sine',
+    short: 'onda',
+    key: 'KeyN',
+    label: 'N · La onda y las líneas que la contienen',
+    verse: "If I'm a sine wave",
+    stages: [{ figure: 'sine' }, { figure: 'sine_grid', at: 0.8 }],
+    sweep: 0.7,
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'rocket',
+    short: 'cohete',
+    key: 'KeyR',
+    label: 'R · El cohete avanza por la curva hacia el infinito',
+    verse: 'If I approach infinity',
+    stages: [{ figure: 'rocket_start' }, { figure: 'rocket_mid', at: 0.7, sweep: 0.45 }, { figure: 'rocket_end', at: 1.45, sweep: 0.45 }],
+    motion: { sway: 0.3 }
+  },
+  {
+    id: 'current',
+    short: 'rayo',
+    key: 'KeyL',
+    label: 'L · Del rayo a la corriente (AC / DC)',
+    verse: 'Switch my current',
+    stages: [{ figure: 'lightning' }, { figure: 'acdc', at: 0.9 }],
+    sweep: 0.8,
+    motion: { sway: 0.25 }
+  },
+  {
+    id: 'blur',
+    short: 'borroso',
+    key: 'KeyV',
+    label: 'V · Todo se vuelve borroso (confusión / claridad)',
+    verse: 'And then blind my vision',
+    stages: [{ figure: 'confusion' }],
+    effects: { blur: 1 },
+    motion: { sway: 0.2 }
+  },
+  {
+    id: 'travel',
+    short: 'dinosaurio→robot',
+    key: 'KeyD',
+    label: 'D · Dinosaurio → robot humanoide',
+    verse: 'Oh, we can travel',
+    stages: [{ figure: 'trex' }, { figure: 'robot', at: 1.0 }],
+    sweep: 0.85,
+    motion: { sway: 0.4 }
   }
 ];

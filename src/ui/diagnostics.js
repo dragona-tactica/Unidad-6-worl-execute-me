@@ -23,15 +23,20 @@ export function createDiagnostics({ count }) {
       );
       lines.push(navigator.userAgent.replace(/^Mozilla\/5.0 /, '').slice(0, 110));
     }
-    if (errors.length) lines.push(...errors.map((e) => `⚠ ${e}`));
+    // Errors stay on screen for a few seconds (all the time with ?debug), so a
+    // one-off hiccup like the pane being resized doesn't cover the picture.
+    const now = performance.now();
+    const recent = errors.filter((e) => verbose || now - e.at < 6000);
+    if (recent.length) lines.push(...recent.map((e) => `⚠ ${e.text}`));
     box.textContent = lines.join('\n');
     box.style.display = lines.length ? 'block' : 'none';
   };
 
   const remember = (text) => {
-    errors.push(String(text).replace(/\s+/g, ' ').slice(0, 200));
+    errors.push({ text: String(text).replace(/\s+/g, ' ').slice(0, 200), at: performance.now() });
     while (errors.length > 4) errors.shift();
     paint();
+    setTimeout(paint, 6100);
   };
 
   const nativeError = console.error;

@@ -68,6 +68,7 @@ export function createCrtParams() {
     persistence: uniform(0.72), // phosphor afterglow
     noise: uniform(0.05),
     vignette: uniform(0.55),
-    roll: uniform(0.0) // vertical-hold bar strength
+    roll: uniform(0.0), // vertical-hold bar strength
+    blur: uniform(0.0) // top half of the screen goes out of focus
   };
 }

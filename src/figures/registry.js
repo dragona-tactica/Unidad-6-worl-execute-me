@@ -10,6 +10,8 @@ import { planet } from './world.js';
 import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
 import { orangeSlice } from './orange.js';
+import { silhouetteFigures } from './silhouettes.js';
+import { sineOnly, sineGrid, rocketStart, rocketMid, rocketEnd, lightning, acdc, confusion } from './math.js';
 
 // FIGURE REGISTRY
 // A figure is a cloud of N points (x, y, z, tint). `tint` (0..1) is looked
@@ -41,7 +43,16 @@ const FIGURES = {
   point: pointOnly,
   point_plane: pointPlane,
   point_label: pointLabel,
-  orange_slice: orangeSlice
+  orange_slice: orangeSlice,
+  sine: sineOnly,
+  sine_grid: sineGrid,
+  rocket_start: rocketStart,
+  rocket_mid: rocketMid,
+  rocket_end: rocketEnd,
+  lightning,
+  acdc,
+  confusion,
+  ...silhouetteFigures
 };
 
 export const FIGURE_IDS = Object.keys(FIGURES);
@@ -94,7 +105,7 @@ async function build(id, N) {
     }
   }
 
-  if (make) return { points: sampleParts(make(), N, rng), source: 'procedural' };
+  if (make) return { points: sampleParts(await make(), N, rng), source: 'procedural' };
 
   console.warn(`[figuras] "${id}" no existe: muestro el cubo marcador.`);
   return { points: sampleParts(placeholder(), N, rng), source: 'placeholder' };

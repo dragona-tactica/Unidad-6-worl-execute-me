@@ -144,10 +144,10 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
   });
   material.positionNode = positions.toAttribute();
   // Moving agents are bigger and hotter, so you can *see* them travel.
-  material.scaleNode = params.particleSize.mul(velocities.toAttribute().length().div(params.maxSpeed).clamp(0.0, 1.0).mul(0.9).add(1.0));
+  material.scaleNode = params.particleSize.mul(velocities.toAttribute().length().div(params.maxSpeed).clamp(0.0, 1.0).mul(0.6).add(1.0));
   material.colorNode = Fn(() => {
     const speed = velocities.toAttribute().length();
-    const glow = speed.div(params.maxSpeed).clamp(0.0, 1.0).mul(0.5);
+    const glow = speed.div(params.maxSpeed).clamp(0.0, 1.0).mul(0.28);
     return vec4(mix(colors.toAttribute().xyz, params.hot, glow), 1.0);
   })();
   material.opacityNode = oneMinus(smoothstep(0.4, 0.5, uv().xy.sub(0.5).length()));
