@@ -19,21 +19,21 @@ export function guideLines() {
   // rings of the cylindrical frame
   for (let k = 0; k <= 6; k++) {
     const y = Y0 + (k * (Y1 - Y0)) / 6;
-    list.push(place(parts.torus({ R, r: 0.007, tint: 0.25 }), { pos: [0, y, 0], rot: [Math.PI / 2, 0, 0], boost: 3.2 }));
+    list.push(place(parts.torus({ R, r: 0.012, tint: 0.25 }), { pos: [0, y, 0], rot: [Math.PI / 2, 0, 0], boost: 3.2 }));
   }
   // verticals
   for (let k = 0; k < 10; k++) {
     const a = (k / 10) * TAU;
-    list.push(tube([Math.cos(a) * R, Y0 - 0.08, Math.sin(a) * R], [Math.cos(a) * R, Y1 + 0.08, Math.sin(a) * R], 0.006, 0.25, 3));
+    list.push(tube([Math.cos(a) * R, Y0 - 0.08, Math.sin(a) * R], [Math.cos(a) * R, Y1 + 0.08, Math.sin(a) * R], 0.011, 0.25, 3));
   }
   // construction diagonals
   [
     [[-0.7, -0.8, 0.2], [0.7, 0.75, -0.25]],
     [[0.6, -0.8, 0.4], [-0.65, 0.8, -0.3]],
     [[-0.3, -0.85, -0.7], [0.35, 0.85, 0.65]]
-  ].forEach(([a, b]) => list.push(tube(a, b, 0.006, 0.5, 3)));
+  ].forEach(([a, b]) => list.push(tube(a, b, 0.011, 0.5, 3)));
   // the path the butterflies will follow
-  list.push(...curve(spiral, 120, 0.014, 0.75, 3));
+  list.push(...curve(spiral, 120, 0.02, 0.75, 3));
   return list;
 }
 
@@ -67,7 +67,7 @@ function swarm(offset, wingLift) {
     const heading = Math.atan2(-Math.sin(s * TURNS * TAU), Math.cos(s * TURNS * TAU));
     list.push(...group(butterfly(wingLift), { pos: [x, y + 0.04, z], rot: [0, -heading + Math.PI / 2, 0], scale: 1.6 }));
   }
-  list.push(...curve(spiral, 120, 0.006, 0.25, 2));
+  list.push(...curve(spiral, 120, 0.01, 0.25, 2));
   return list;
 }
 

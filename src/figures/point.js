@@ -13,20 +13,20 @@ function plane() {
     // the sheet, with a faint grid
     place(parts.plane({ w: 1.9, h: 1.5, tint: 0.1 }), { pos: [0, 0, -0.03], boost: 0.22 }),
     // red-hot axes of the reference
-    tube([-0.95, 0, 0], [0.95, 0, 0], 0.012, 0.62, 4),
-    tube([0, -0.75, 0], [0, 0.75, 0], 0.012, 0.62, 4),
+    tube([-0.95, 0, 0], [0.95, 0, 0], 0.022, 0.62, 4),
+    tube([0, -0.75, 0], [0, 0.75, 0], 0.022, 0.62, 4),
     // the halo around the inflection point
     place(parts.disc({ radius: 0.21, tint: 0.88 }), { pos: [0, 0, -0.01], boost: 0.9 }),
     // the cubic itself
     ...curve((t) => {
       const x = -0.74 + 1.48 * t;
       return [x, 1.6 * Math.pow(x, 3) * 1.0, 0];
-    }, 60, 0.02, 0.25, 3.2)
+    }, 60, 0.032, 0.25, 3.2)
   ];
   for (let k = -3; k <= 3; k++) {
     const v = k * 0.25;
-    list.push(tube([-0.95, v * 0.8, -0.02], [0.95, v * 0.8, -0.02], 0.004, 0.1, 2));
-    list.push(tube([v * 1.25, -0.75, -0.02], [v * 1.25, 0.75, -0.02], 0.004, 0.1, 2));
+    list.push(tube([-0.95, v * 0.8, -0.02], [0.95, v * 0.8, -0.02], 0.007, 0.1, 2.4));
+    list.push(tube([v * 1.25, -0.75, -0.02], [v * 1.25, 0.75, -0.02], 0.007, 0.1, 2.4));
   }
   return list;
 }

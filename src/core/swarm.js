@@ -1,6 +1,7 @@
 import * as THREE from 'three/webgpu';
 import {
   Fn,
+  atan,
   cos,
   hash,
   instanceIndex,
@@ -80,10 +81,16 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     // STAGE A -> B. The sweep starts at the top of the figure and crosses
     // downward (with noise), so the figure visibly *melts* into the next one.
     const height = tA.y.mul(0.5).add(0.5).clamp(0.0, 1.0);
-    const delay = oneMinus(height).mul(0.7).add(rndDelay.mul(0.3));
+    const topDown = oneMinus(height).mul(0.7).add(rndDelay.mul(0.3));
+    // Angular sweeps go around params.sweepCenter: a ring being drawn (by
+    // where the agent is going) or unrolled (by where it comes from).
+    const turn = (t) => atan(t.y.sub(params.sweepCenter.y), t.x.sub(params.sweepCenter.x)).div(6.28318).add(0.5);
+    const aroundA = turn(tA).mul(0.88).add(rndDelay.mul(0.12));
+    const aroundB = turn(tB).mul(0.88).add(rndDelay.mul(0.12));
+    const delay = select(params.sweepMode.lessThan(0.5), topDown, select(params.sweepMode.lessThan(1.5), aroundA, aroundB));
     const started = params.transformT.greaterThanEqual(0.0);
     const wantsB = select(started.and(params.transformT.greaterThanEqual(delay.mul(params.sweep))), 1.0, 0.0);
-    const rate = dt.div(0.3);
+    const rate = dt.div(params.blendTime);
     const moved = b0.add(wantsB.sub(b0).clamp(rate.negate(), rate));
     const blend = select(params.blendReset.greaterThan(0.5), 0.0, moved);
     const eased = smoothstep(0.0, 1.0, blend);
@@ -136,10 +143,11 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     alphaTest: 0.5
   });
   material.positionNode = positions.toAttribute();
-  material.scaleNode = params.particleSize;
+  // Moving agents are bigger and hotter, so you can *see* them travel.
+  material.scaleNode = params.particleSize.mul(velocities.toAttribute().length().div(params.maxSpeed).clamp(0.0, 1.0).mul(0.9).add(1.0));
   material.colorNode = Fn(() => {
     const speed = velocities.toAttribute().length();
-    const glow = speed.div(params.maxSpeed).clamp(0.0, 1.0).mul(0.45);
+    const glow = speed.div(params.maxSpeed).clamp(0.0, 1.0).mul(0.5);
     return vec4(mix(colors.toAttribute().xyz, params.hot, glow), 1.0);
   })();
   material.opacityNode = oneMinus(smoothstep(0.4, 0.5, uv().xy.sub(0.5).length()));
@@ -153,6 +161,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
   let morphing = false;
   let morphElapsed = 0;
   let morphLength = 0;
+  let agitation = 0; // 1 right after a card starts or morphs, then fades: drives the afterglow
 
   renderer.compute(init);
 
@@ -168,8 +177,13 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
 
   return {
     count,
+    // 0..1: how recently the swarm was told to move (see main.js, afterglow).
+    get agitation() {
+      return agitation;
+    },
     // A card starts: the whole swarm flows to this figure.
     begin(figure) {
+      agitation = 1;
       targetAData.array.set(figure.points);
       targetAData.needsUpdate = true;
       targetBData.array.set(figure.points);
@@ -180,15 +194,18 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
       hasTargetGoal = 1;
     },
     // The next figure of the card: a sweep melts the current one into it.
-    morphTo(figure, sweepSeconds) {
+    morphTo(figure, sweepSeconds, mode = 0, center = [0, 0]) {
+      agitation = 1;
       if (morphing) commit();
+      params.sweepMode.value = mode;
+      params.sweepCenter.value.set(center[0], center[1]);
       targetBData.array.set(figure.points);
       targetBData.needsUpdate = true;
       params.sweep.value = sweepSeconds;
       params.transformT.value = 0;
       morphing = true;
       morphElapsed = 0;
-      morphLength = sweepSeconds + 0.45;
+      morphLength = sweepSeconds + params.blendTime.value + 0.05;
     },
     // Let go of the figure: agents go back to drifting on the flow field.
     release() {
@@ -198,6 +215,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     },
     update(dt) {
       params.dt.value = dt;
+      agitation = Math.max(0, agitation - dt / 1.1);
       params.hasTarget.value += (hasTargetGoal - params.hasTarget.value) * (1 - Math.exp(-dt * 6.0));
       if (morphing) {
         morphElapsed += dt;

@@ -26,12 +26,12 @@ export function createParams() {
 
     // FIGURE SWARM (steering)
     hasTarget: uniform(0.0), // 0 = drift on the flow field, 1 = chase the figure
-    maxSpeed: uniform(15.0),
-    maxForce: uniform(150.0),
-    steerGain: uniform(14.0), // how hard an agent corrects toward its desired velocity (1/s)
-    slowRadius: uniform(1.0),
+    maxSpeed: uniform(11.0),
+    maxForce: uniform(110.0),
+    steerGain: uniform(8.0), // how hard an agent corrects toward its desired velocity (1/s)
+    slowRadius: uniform(1.1),
     idleSpeed: uniform(1.1),
-    swirl: uniform(0.5), // how much far-away agents still ride the flow while travelling
+    swirl: uniform(1.3), // far-away agents curve along the flow, so the travelling is visible // how much far-away agents still ride the flow while travelling
     shimmer: uniform(0.025), // tiny life added to the figure so it never freezes
     bounds: uniform(7.0),
     particleSize: uniform(0.018),
@@ -43,6 +43,9 @@ export function createParams() {
     transformT: uniform(-1.0), // seconds since the sweep began, -1 = not started
     sweep: uniform(0.7), // seconds it takes the sweep to cross the whole figure
     blendReset: uniform(0.0),
+    blendTime: uniform(0.4), // seconds one agent takes to switch from stage A to B
+    sweepMode: uniform(0.0), // 0 top-down · 1 angle around sweepCenter (by A) · 2 same, by B
+    sweepCenter: uniform(new THREE.Vector2(0, 0)),
 
     // The palette (from "Paleta de colores.jpg"): a figure's tint 0..1 walks
     // this ramp — deep violet, electric violet, magenta, orange, peach.

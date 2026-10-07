@@ -1,7 +1,7 @@
 import { mulberry32, sampleParts, parts, tube } from './sampling.js';
 import { sampleGLB } from './sampleGLB.js';
 import { plugApart, plugJoined } from './plug.js';
-import { goggles, rosary } from './protection.js';
+import { goggles } from './protection.js';
 import { sandwichExploded, sandwichJoined } from './sandwich.js';
 import { human, skeleton, galaxy } from './body.js';
 import { guideLines, butterfliesA, butterfliesB } from './butterflies.js';
@@ -9,7 +9,7 @@ import { tvOnly, tvHand } from './tvhand.js';
 import { planet } from './world.js';
 import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
-import { orangeWhole, orangeCut, orangeRing } from './orange.js';
+import { orangeFlat, orangeCircle, orangeLine } from './orange.js';
 
 // FIGURE REGISTRY
 // A figure is a cloud of N points (x, y, z, tint). `tint` (0..1) is looked
@@ -26,7 +26,6 @@ const FIGURES = {
   plug_apart: plugApart,
   plug_joined: plugJoined,
   goggles,
-  rosary,
   sandwich_exploded: sandwichExploded,
   sandwich_joined: sandwichJoined,
   human,
@@ -43,9 +42,9 @@ const FIGURES = {
   point: pointOnly,
   point_plane: pointPlane,
   point_label: pointLabel,
-  orange_whole: orangeWhole,
-  orange_cut: orangeCut,
-  orange_ring: orangeRing
+  orange_flat: orangeFlat,
+  orange_circle: orangeCircle,
+  orange_line: orangeLine
 };
 
 export const FIGURE_IDS = Object.keys(FIGURES);

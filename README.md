@@ -16,7 +16,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | Tecla | Fragmento | Qué pasa (figura A → B → C) |
 |---|---|---|
 | `E` | 01 · Switch on the power line | dos mitades de enchufe con sus cables se acercan y se conectan con chispas |
-| `G` | 02 · Remember to put on protection | gafas de laboratorio → rosario con cruz |
+| `G` | 02 · Remember to put on protection | gafas de laboratorio, una sola pieza sólida (silueta) |
 | `S` | 03 · Lay down your pieces | capas de un sándwich en vista explotada → sándwich armado |
 | `H` | 04 · And let's begin object creation | cuerpo humano → esqueleto → galaxia espiral |
 | `M` | 05 · Fill in my data parameters | líneas de construcción y espiral → mariposas que la recorren |
@@ -24,7 +24,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `W` | 07 · Set up our new world | el planeta con anillo (el de la primera prueba) |
 | `C` | 08 · And let's begin the simulation | rejilla plana → líneas de campo con garganta (agujero de gusano) |
 | `P` | 09 · If I'm a set of point | punto → plano con ejes y curva → "POINT OF INFLECTION" |
-| `O` | 11 · If I'm a circle | naranja → corte con gajos → la circunferencia sale con su radio y "C = 2πr" |
+| `O` | 11 · If I'm a circle | naranja cortada con sus gajos → se dibuja la circunferencia vuelta a vuelta → se desenrolla en una línea "C = 2πr" |
 
 Los tiempos de cada etapa (`at`, `sweep`) están en `src/cards/cards.js`; ninguna carta pasa
 de ~2.4 s. El movimiento entre figuras no es una animación: son los agentes persiguiendo
@@ -48,6 +48,17 @@ sus nuevos puntos (steering).
 - **El flow field** está separado en dos partes: la *construcción* del campo
   (`src/core/flowField.js`, ruido que cambia en el tiempo y se puede torcer) y la
   *consulta* que cada agente hace de él (`swarm.js`, `background.js`).
+
+## Diagnóstico
+Abre la página con `?debug` al final de la dirección para ver arriba a la derecha el estado de
+WebGPU, el tamaño del canvas, los cuadros y los fps. Cualquier error del navegador aparece ahí
+siempre, aunque no pongas `?debug`.
+
+## Cómo se ven las transiciones
+Cada etapa se empareja con la anterior (`src/figures/match.js`, orden de Morton): lo que las
+dos figuras comparten se queda quieto y el resto viaja como un solo cuerpo. Mientras el
+enjambre se mueve las partículas se agrandan, se calientan y dejan estela (la persistencia
+del fósforo sube); al reposar la imagen vuelve a ser nítida.
 
 ## Cómo reemplazar una figura por tu propio modelo 3D
 

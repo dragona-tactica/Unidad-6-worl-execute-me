@@ -9,7 +9,6 @@ import { createBackground } from './core/background.js';
 import { createSwarm } from './core/swarm.js';
 import { createCRT } from './core/crt.js';
 import { CARDS } from './cards/cards.js';
-import { FIGURE_IDS, loadFigure } from './figures/registry.js';
 import { createCardPlayer } from './cards/cardPlayer.js';
 import { createDiagnostics } from './ui/diagnostics.js';
 
@@ -89,10 +88,11 @@ async function main() {
   });
   addEventListener('keyup', (event) => held.delete(event.code));
 
-  // Build every figure in the background so a keypress never waits.
+  // Build every card (figures + the pairing between their stages) in the
+  // background, so a keypress never waits.
   (async () => {
-    for (const id of FIGURE_IDS) {
-      await loadFigure(id, FIGURE_AGENTS);
+    for (const card of CARDS) {
+      await player.prepare(card);
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
   })();
@@ -136,6 +136,9 @@ async function main() {
 
     player.update(dt);
     swarm.update(dt);
+    // While the swarm is travelling the screen holds on to the glow, so you
+    // see trails of particles forming the figure; at rest it stays sharp.
+    crt.persistence.value = 0.5 + 0.28 * swarm.agitation;
     background.update();
     orbit.update();
     screen.render();

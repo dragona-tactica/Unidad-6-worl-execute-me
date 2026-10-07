@@ -19,26 +19,25 @@ export const CARDS = [
     key: 'KeyE',
     label: 'E · Enciende la línea de poder (enchufe)',
     verse: 'Switch on the power line',
-    stages: [{ figure: 'plug_apart' }, { figure: 'plug_joined', at: 0.8 }],
-    sweep: 0.6,
+    stages: [{ figure: 'plug_apart' }, { figure: 'plug_joined', at: 0.9 }],
+    sweep: 0.7,
     motion: { sway: 0.45 }
   },
   {
     id: 'protection',
     key: 'KeyG',
-    label: 'G · Gafas → rosario (protección)',
+    label: 'G · Gafas de laboratorio (protección)',
     verse: 'Remember to put on protection',
-    stages: [{ figure: 'goggles' }, { figure: 'rosary', at: 0.85 }],
-    sweep: 0.65,
-    motion: { sway: 0.55 }
+    stages: [{ figure: 'goggles' }],
+    motion: { sway: 0.6 }
   },
   {
     id: 'sandwich',
     key: 'KeyS',
     label: 'S · Sándwich: las piezas se unen',
     verse: 'Lay down your pieces',
-    stages: [{ figure: 'sandwich_exploded' }, { figure: 'sandwich_joined', at: 0.85 }],
-    sweep: 0.65,
+    stages: [{ figure: 'sandwich_exploded' }, { figure: 'sandwich_joined', at: 0.9 }],
+    sweep: 0.75,
     motion: { spin: 0.7 }
   },
   {
@@ -46,8 +45,8 @@ export const CARDS = [
     key: 'KeyH',
     label: 'H · Humano → esqueleto → cosmos (creación)',
     verse: "And let's begin object creation",
-    stages: [{ figure: 'human' }, { figure: 'skeleton', at: 0.7 }, { figure: 'galaxy', at: 1.45 }],
-    sweep: 0.45,
+    stages: [{ figure: 'human' }, { figure: 'skeleton', at: 0.6 }, { figure: 'galaxy', at: 1.4 }],
+    sweep: 0.35,
     motion: { sway: 0.5 }
   },
   {
@@ -55,8 +54,8 @@ export const CARDS = [
     key: 'KeyM',
     label: 'M · Líneas y mariposas que las recorren (parámetros)',
     verse: 'Fill in my data parameters',
-    stages: [{ figure: 'guide_lines' }, { figure: 'butterflies_a', at: 0.65 }, { figure: 'butterflies_b', at: 1.4 }],
-    sweep: 0.45,
+    stages: [{ figure: 'guide_lines' }, { figure: 'butterflies_a', at: 0.6 }, { figure: 'butterflies_b', at: 1.4 }],
+    sweep: 0.35,
     motion: { spin: 0.55 }
   },
   {
@@ -64,8 +63,8 @@ export const CARDS = [
     key: 'KeyI',
     label: 'I · La mano te invita a entrar (inicialización)',
     verse: 'Initialization',
-    stages: [{ figure: 'tv' }, { figure: 'tv_hand', at: 0.8 }],
-    sweep: 0.6,
+    stages: [{ figure: 'tv' }, { figure: 'tv_hand', at: 0.9 }],
+    sweep: 0.7,
     motion: { sway: 0.5 }
   },
   {
@@ -81,7 +80,7 @@ export const CARDS = [
     key: 'KeyC',
     label: 'C · Líneas de campo: comienza la simulación',
     verse: "And let's begin the simulation",
-    stages: [{ figure: 'field_flat' }, { figure: 'wormhole', at: 0.8 }],
+    stages: [{ figure: 'field_flat' }, { figure: 'wormhole', at: 0.9 }],
     sweep: 0.7,
     motion: { sway: 0.4 }
   },
@@ -90,17 +89,21 @@ export const CARDS = [
     key: 'KeyP',
     label: 'P · Punto → plano → letras',
     verse: "If I'm a set of point",
-    stages: [{ figure: 'point' }, { figure: 'point_plane', at: 0.65 }, { figure: 'point_label', at: 1.4 }],
-    sweep: 0.45,
+    stages: [{ figure: 'point' }, { figure: 'point_plane', at: 0.6 }, { figure: 'point_label', at: 1.4 }],
+    sweep: 0.35,
     motion: { sway: 0.35 }
   },
   {
     id: 'circle',
     key: 'KeyO',
-    label: 'O · La circunferencia de una naranja',
+    label: 'O · La circunferencia sale de una naranja',
     verse: "If I'm a circle",
-    stages: [{ figure: 'orange_whole' }, { figure: 'orange_cut', at: 0.7 }, { figure: 'orange_ring', at: 1.45 }],
-    sweep: 0.45,
-    motion: { sway: 0.5 }
+    // the ring is drawn turn by turn around the orange, then unrolled into a line
+    stages: [
+      { figure: 'orange_flat' },
+      { figure: 'orange_circle', at: 0.6, sweep: 0.5, mode: 'angleB', center: [0, 0.45] },
+      { figure: 'orange_line', at: 1.4, sweep: 0.55, mode: 'angleA', center: [0, 0.45] }
+    ],
+    motion: { sway: 0.2 }
   }
 ];
