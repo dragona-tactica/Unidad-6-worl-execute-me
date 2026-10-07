@@ -61,7 +61,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     positions.element(i).assign(vec3(a, b, c).mul(4.5));
     velocities.element(i).assign(vec3(0.0));
     blends.element(i).assign(0.0);
-    colors.element(i).assign(ramp(hash(i.add(uint(5))).mul(0.5)));
+    colors.element(i).assign(ramp(hash(i.add(uint(5))).mul(0.65).add(0.35)));
   })().compute(count).setName('Swarm init');
 
   const update = Fn(() => {
@@ -122,7 +122,10 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     velocities.element(i).assign(v2);
     blends.element(i).assign(blend);
 
-    colors.element(i).assign(mix(ramp(tA.w), ramp(tB.w), eased));
+    // With no figure the agents are bright TV snow (random walk along the
+    // palette); the figure's own colors take over as hasTarget rises.
+    const snow = ramp(rndSpeed.mul(0.65).add(0.35));
+    colors.element(i).assign(mix(snow, mix(ramp(tA.w), ramp(tB.w), eased), params.hasTarget));
   })().compute(count).setName('Swarm update');
 
   // RENDER ------------------------------------------------------------

@@ -64,9 +64,11 @@ export async function createBackground({ renderer, scene, params, flow, count })
   material.scaleNode = params.bgSize;
   material.colorNode = Fn(() => {
     const speed = velocities.toAttribute().length().div(params.bgSpeed).clamp(0.0, 1.0);
-    return vec4(mix(params.bgColorA, params.bgColorB, speed).mul(params.bgBrightness), 1.0);
+    // bright TV signal while idle, dimmer behind a figure so it never competes
+    const level = mix(params.bgIdleBrightness, params.bgBrightness, params.hasTarget);
+    return vec4(mix(params.bgColorA, params.bgColorB, speed).mul(level), 1.0);
   })();
-  material.opacityNode = params.bgBrightness.mul(0.8);
+  material.opacityNode = mix(params.bgIdleBrightness, params.bgBrightness, params.hasTarget).mul(0.9).add(0.1);
 
   const mesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), material, count);
   mesh.frustumCulled = false;

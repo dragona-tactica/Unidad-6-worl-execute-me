@@ -18,10 +18,11 @@ export function createParams() {
     // BACKGROUND AGENTS (the "TV signal")
     bgSpeed: uniform(1.6),
     bgForce: uniform(5.0),
-    bgSize: uniform(0.04),
+    bgSize: uniform(0.05),
     bgColorA: color('#3e0f6e'),
     bgColorB: color('#ea7525'),
-    bgBrightness: uniform(0.26),
+    bgBrightness: uniform(0.26), // behind a figure
+    bgIdleBrightness: uniform(0.95), // with no figure: the screen is alive
 
     // FIGURE SWARM (steering)
     hasTarget: uniform(0.0), // 0 = drift on the flow field, 1 = chase the figure
