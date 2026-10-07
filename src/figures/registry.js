@@ -9,7 +9,7 @@ import { tvOnly, tvHand } from './tvhand.js';
 import { planet } from './world.js';
 import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
-import { orangeFlat, orangeCircle, orangeLine } from './orange.js';
+import { orangeSlice } from './orange.js';
 
 // FIGURE REGISTRY
 // A figure is a cloud of N points (x, y, z, tint). `tint` (0..1) is looked
@@ -42,9 +42,7 @@ const FIGURES = {
   point: pointOnly,
   point_plane: pointPlane,
   point_label: pointLabel,
-  orange_flat: orangeFlat,
-  orange_circle: orangeCircle,
-  orange_line: orangeLine
+  orange_slice: orangeSlice
 };
 
 export const FIGURE_IDS = Object.keys(FIGURES);

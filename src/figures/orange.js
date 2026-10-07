@@ -1,70 +1,59 @@
 import { parts, place, tube, textPoints, TAU } from './sampling.js';
 
-// 11 · If I'm a circle — the circumference "comes out" of an orange, only
-// visually (reference: an orange cut open, with its radius, wedges and the
-// circumference formula).
-//   1 · the orange, a flat cut face with its wedges
-//   2 · a ring is DRAWN around its rim, turn by turn, and the radius appears
-//   3 · the ring is UNROLLED into a straight line: 2πr
-export const ORANGE_CENTER = [0, 0.45];
-const CY = ORANGE_CENTER[1];
-const R = 0.38;
-const RING = R + 0.07;
+// 11 · If I'm a circle — a slice of orange with its triangle drawn on it in
+// dots, and the circumference equation beside it (reference: an orange cut
+// open, with the radius, the 60° wedge and the formula). No animation: it is
+// just the slice, the dotted triangle and the equation.
+const CX = -0.42; // the slice sits to the left, the equation to the right
+const CY = 0.12;
+const R = 0.5;
 const WEDGES = 8;
 
 const wedgeTint = (x, y) => {
-  const a = (Math.atan2(y - CY, x) + TAU) % TAU;
+  const a = (Math.atan2(y - CY, x - CX) + TAU) % TAU;
   return Math.floor((a / TAU) * WEDGES) % 2 ? 0.86 : 0.74;
 };
 
-function orange() {
-  const list = [
-    // peel
-    place(parts.torus({ R, r: 0.055, tint: 0.6 }), { pos: [0, CY, 0], boost: 2.4 }),
-    // flesh, in alternating wedges
-    place(parts.disc({ radius: R - 0.03, tint: 0.8 }), { pos: [0, CY, 0], tintWorld: wedgeTint, boost: 1.7 }),
-    // the body of the orange behind the cut
-    place(parts.sphere(R, 0.6), { pos: [0, CY, -0.02], boost: 0.5 })
-  ].map((part, i) =>
-    i < 2
-      ? part
-      : {
-          weight: part.weight / 2,
-          sample: (rng) => {
-            const q = part.sample(rng);
-            q[2] = -Math.abs(q[2] + 0.02) - 0.02;
-            return q;
-          }
-        }
-  );
-  for (let k = 0; k < WEDGES; k++) {
-    const a = (k / WEDGES) * TAU;
-    list.push(tube([0, CY, 0.012], [Math.cos(a) * (R - 0.03), CY + Math.sin(a) * (R - 0.03), 0.012], 0.012, 1, 3));
+// A line made of separate dots instead of a continuous stroke.
+const dotted = (a, b, step = 0.062) => {
+  const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const count = Math.max(2, Math.round(length / step));
+  const dots = [];
+  for (let i = 0; i <= count; i++) {
+    const t = i / count;
+    dots.push(place(parts.sphere(0.021, 1), { pos: [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, 0.04], boost: 11 }));
   }
-  list.push(place(parts.sphere(0.04, 1), { pos: [0, CY, 0.02], boost: 6 }));
-  return list;
-}
-
-const ring = () => [place(parts.torus({ R: RING, r: 0.03, tint: 1 }), { pos: [0, CY, 0.02], boost: 3.6 })];
-
-const radius = () => {
-  const a = 0.75;
-  return [tube([0, CY, 0.03], [Math.cos(a) * RING, CY + Math.sin(a) * RING, 0.03], 0.02, 1, 4)];
+  return dots;
 };
 
-export const orangeFlat = () => orange();
-export const orangeCircle = () => [...orange(), ...ring(), ...radius()];
-
-export function orangeLine() {
-  const half = Math.PI * RING; // half of 2πr: the unrolled ring, laid flat
-  const y = -0.42;
-  const formula = textPoints('C = 2πr', { height: 0.13 });
-  return [
-    ...orange(),
-    ...radius(),
-    tube([-half, y, 0], [half, y, 0], 0.026, 1, 3),
-    tube([-half, y - 0.08, 0], [-half, y + 0.08, 0], 0.02, 1, 3),
-    tube([half, y - 0.08, 0], [half, y + 0.08, 0], 0.02, 1, 3),
-    place(parts.cloud(formula.points.map(([x, py]) => [x, py - 0.64, 0.02]), 0.9, 0.7), {})
+export function orangeSlice() {
+  const slice = [
+    // peel
+    place(parts.torus({ R, r: 0.06, tint: 0.6 }), { pos: [CX, CY, 0], boost: 2.4 }),
+    // flesh, in alternating wedges
+    place(parts.disc({ radius: R - 0.035, tint: 0.8 }), { pos: [CX, CY, 0], tintWorld: wedgeTint, boost: 1.8 })
   ];
+  // the thin membranes between the wedges
+  for (let k = 0; k < WEDGES; k++) {
+    const a = (k / WEDGES) * TAU;
+    slice.push(tube([CX, CY, 0.012], [CX + Math.cos(a) * (R - 0.035), CY + Math.sin(a) * (R - 0.035), 0.012], 0.012, 0.95, 3));
+  }
+
+  // The triangle: the center and two points of the rim, 60° apart.
+  const inner = R - 0.02;
+  const a0 = -0.1;
+  const a1 = a0 + Math.PI / 3;
+  const center = [CX, CY];
+  const p0 = [CX + Math.cos(a0) * inner, CY + Math.sin(a0) * inner];
+  const p1 = [CX + Math.cos(a1) * inner, CY + Math.sin(a1) * inner];
+  const triangle = [...dotted(center, p0), ...dotted(center, p1), ...dotted(p0, p1)];
+
+  // The equation, as particles.
+  const equation = textPoints('C = 2πr', { height: 0.2 });
+  const text = place(
+    parts.cloud(equation.points.map(([x, y]) => [x + 0.82, y + 0.12, 0.02]), 0.9, 1.1),
+    {}
+  );
+
+  return [...slice, ...triangle, text];
 }

@@ -24,7 +24,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `W` | 07 · Set up our new world | el planeta con anillo (el de la primera prueba) |
 | `C` | 08 · And let's begin the simulation | rejilla plana → líneas de campo con garganta (agujero de gusano) |
 | `P` | 09 · If I'm a set of point | punto → plano con ejes y curva → "POINT OF INFLECTION" |
-| `O` | 11 · If I'm a circle | naranja cortada con sus gajos → se dibuja la circunferencia vuelta a vuelta → se desenrolla en una línea "C = 2πr" |
+| `O` | 11 · If I'm a circle | rodaja de naranja con su triángulo punteado y, a un lado, la ecuación "C = 2πr" (sin animación) |
 
 Los tiempos de cada etapa (`at`, `sweep`) están en `src/cards/cards.js`; ninguna carta pasa
 de ~2.4 s. El movimiento entre figuras no es una animación: son los agentes persiguiendo

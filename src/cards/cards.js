@@ -96,14 +96,9 @@ export const CARDS = [
   {
     id: 'circle',
     key: 'KeyO',
-    label: 'O · La circunferencia sale de una naranja',
+    label: 'O · Rodaja de naranja con su triángulo y la ecuación',
     verse: "If I'm a circle",
-    // the ring is drawn turn by turn around the orange, then unrolled into a line
-    stages: [
-      { figure: 'orange_flat' },
-      { figure: 'orange_circle', at: 0.6, sweep: 0.5, mode: 'angleB', center: [0, 0.45] },
-      { figure: 'orange_line', at: 1.4, sweep: 0.55, mode: 'angleA', center: [0, 0.45] }
-    ],
-    motion: { sway: 0.2 }
+    stages: [{ figure: 'orange_slice' }],
+    motion: { sway: 0.22 }
   }
 ];
