@@ -18,38 +18,39 @@ export function createParams() {
     // BACKGROUND AGENTS (the "TV signal")
     bgSpeed: uniform(1.6),
     bgForce: uniform(5.0),
-    bgSize: uniform(0.05),
-    bgColorA: color('#14202a'),
-    bgColorB: color('#8fd0e8'),
-    bgBrightness: uniform(0.65),
+    bgSize: uniform(0.04),
+    bgColorA: color('#3e0f6e'),
+    bgColorB: color('#ea7525'),
+    bgBrightness: uniform(0.26),
 
     // FIGURE SWARM (steering)
     hasTarget: uniform(0.0), // 0 = drift on the flow field, 1 = chase the figure
-    maxSpeed: uniform(7.0),
-    maxForce: uniform(34.0),
-    slowRadius: uniform(1.4),
+    maxSpeed: uniform(15.0),
+    maxForce: uniform(150.0),
+    steerGain: uniform(14.0), // how hard an agent corrects toward its desired velocity (1/s)
+    slowRadius: uniform(1.0),
     idleSpeed: uniform(1.1),
-    swirl: uniform(0.9), // how much far-away agents still ride the flow while travelling
+    swirl: uniform(0.5), // how much far-away agents still ride the flow while travelling
     shimmer: uniform(0.025), // tiny life added to the figure so it never freezes
     bounds: uniform(7.0),
     particleSize: uniform(0.018),
-    figureScale: uniform(2.3),
+    figureScale: uniform(2.7),
     rotY: uniform(0.0),
     tiltX: uniform(0.28),
 
     // Transformation A -> B, driven by one keypress (see cards/cardPlayer.js)
     transformT: uniform(-1.0), // seconds since the sweep began, -1 = not started
-    sweep: uniform(2.2), // seconds it takes the sweep to cross the whole figure
+    sweep: uniform(0.7), // seconds it takes the sweep to cross the whole figure
     blendReset: uniform(0.0),
 
-    // Per-figure color ramps (dark -> mid -> highlight), A and B stage
-    colA0: color('#1a2a33'),
-    colA1: color('#6fa8bd'),
-    colA2: color('#e6f4ff'),
-    colB0: color('#1a2a33'),
-    colB1: color('#6fa8bd'),
-    colB2: color('#e6f4ff'),
-    hot: color('#ffffff')
+    // The palette (from "Paleta de colores.jpg"): a figure's tint 0..1 walks
+    // this ramp — deep violet, electric violet, magenta, orange, peach.
+    pal0: color('#2a0a4f'),
+    pal1: color('#7c09db'),
+    pal2: color('#ad28a0'),
+    pal3: color('#ea7525'),
+    pal4: color('#ffd6a3'),
+    hot: color('#fff1dc')
   };
 }
 

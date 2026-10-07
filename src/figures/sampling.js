@@ -153,6 +153,55 @@ export const parts = {
     };
   },
 
+  // Filled disc in the XY plane.
+  disc({ radius = 1, tint = 0.5 } = {}) {
+    return {
+      weight: Math.PI * radius * radius,
+      sample: (rng) => {
+        const a = rng() * TAU;
+        const r = Math.sqrt(rng()) * radius;
+        const q = [Math.cos(a) * r, Math.sin(a) * r, 0];
+        return [...q, tintOf(tint, q, rng)];
+      }
+    };
+  },
+
+  // Part of a cylinder wall around Y, facing +Z at angle 0 (goggle lens).
+  arc({ radius = 1, height = 1, a0 = -1, a1 = 1, tint = 0.5 } = {}) {
+    return {
+      weight: radius * (a1 - a0) * height,
+      sample: (rng) => {
+        const a = a0 + rng() * (a1 - a0);
+        const q = [Math.sin(a) * radius, (rng() - 0.5) * height, Math.cos(a) * radius];
+        return [...q, tintOf(tint, q, rng)];
+      }
+    };
+  },
+
+  // Rippled sheet in the XZ plane: y = amp * sin(fx x) * cos(fz z).
+  wavy({ w = 1, d = 1, amp = 0.03, fx = 10, fz = 8, tint = 0.5 } = {}) {
+    return {
+      weight: w * d,
+      sample: (rng) => {
+        const x = (rng() - 0.5) * w;
+        const z = (rng() - 0.5) * d;
+        const q = [x, amp * Math.sin(fx * x) * Math.cos(fz * z), z];
+        return [...q, tintOf(tint, q, rng)];
+      }
+    };
+  },
+
+  // An explicit list of [x, y, z] points (text, hand-placed marks).
+  cloud(points, tint = 0.5, weight = 1) {
+    return {
+      weight,
+      sample: (rng) => {
+        const q = points[(rng() * points.length) | 0];
+        return [q[0], q[1], q[2], tintOf(tint, q, rng)];
+      }
+    };
+  },
+
   triangle(a, b, c, tint = 0.5) {
     const ab = new THREE.Vector3(...b).sub(new THREE.Vector3(...a));
     const ac = new THREE.Vector3(...c).sub(new THREE.Vector3(...a));
@@ -244,4 +293,50 @@ export function sampleParts(list, N, rng) {
     out[i * 4 + 3] = t;
   }
   return out;
+}
+
+// A rounded limb: tube plus a ball on each end.
+export function capsule(a, b, radius, tint = 0.5, boost = 1) {
+  return [
+    tube(a, b, radius, tint, boost),
+    place(parts.sphere(radius, tint), { pos: a, boost }),
+    place(parts.sphere(radius, tint), { pos: b, boost })
+  ];
+}
+
+// Samples fn(t), t in [0, 1], into a chain of tubes.
+export function curve(fn, steps, radius, tint = 0.5, boost = 1) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) pts.push(fn(i / steps));
+  return polyline(pts, radius, tint, boost);
+}
+
+// Moves/rotates/scales a whole list of parts as one object.
+export const group = (list, opts) => list.map((part) => place(part, opts));
+
+// Text as particles: draws the string on a canvas and keeps the lit pixels.
+// `height` is the world-space height of one line; the result is centered.
+export function textPoints(text, { height = 0.1 } = {}) {
+  const fontPx = 64;
+  const font = `bold ${fontPx}px ui-monospace, Menlo, Consolas, monospace`;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.font = font;
+  const w = Math.ceil(ctx.measureText(text).width) + 8;
+  const h = fontPx + 16;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.font = font;
+  ctx.fillStyle = '#fff';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 4, h / 2);
+  const data = ctx.getImageData(0, 0, w, h).data;
+  const scale = height / fontPx;
+  const points = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (data[(y * w + x) * 4 + 3] > 128) points.push([(x - w / 2) * scale, -(y - h / 2) * scale, 0]);
+    }
+  }
+  return { points, width: w * scale };
 }

@@ -7,31 +7,35 @@ persistencia del fósforo) muestra un enjambre de 160 000 partículas que forman
 girando, cada metáfora de la letra. **Nada ocurre solo**: cada metáfora se dispara con una
 tecla y no hay análisis de audio ni secuencias automáticas.
 
-## Prueba actual: las primeras 10 metáforas
+## Cartas actuales: los primeros 10 fragmentos
 
-| Tecla | Metáfora | Figuras (etapa A → B) |
+Cada carta sigue la referencia (imagen + indicación) de su carpeta, dura unos 2 s y se
+dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
+(violeta profundo → violeta eléctrico → magenta → naranja → durazno).
+
+| Tecla | Fragmento | Qué pasa (figura A → B → C) |
 |---|---|---|
-| `1` | Enciende el interruptor, enchufa el cable | enchufe con su cable |
-| `2` | Protección | gafas de laboratorio + cruz roja |
-| `3` | Cargan las columnas de partículas | base plana → columnas que crecen |
-| `4` | Algo se materializa | cubo de alambre → cubo sólido |
-| `5` | Los parámetros se ajustan, como al editar una foto | panel de sliders → sliders movidos |
-| `6` | Se crea un planeta | planeta con anillo |
-| `7` | La pantalla comienza la simulación | monitor apagado → encendido con ▶ |
-| `8` | Un punto y sus dimensiones | punto → punto con ejes |
-| `9` | Un anillo y su circunferencia | anillo → anillo con marcas y radio |
-| `0` | La onda y las tangentes | onda seno → onda con tangentes |
+| `E` | 01 · Switch on the power line | dos mitades de enchufe con sus cables se acercan y se conectan con chispas |
+| `G` | 02 · Remember to put on protection | gafas de laboratorio → rosario con cruz |
+| `S` | 03 · Lay down your pieces | capas de un sándwich en vista explotada → sándwich armado |
+| `H` | 04 · And let's begin object creation | cuerpo humano → esqueleto → galaxia espiral |
+| `M` | 05 · Fill in my data parameters | líneas de construcción y espiral → mariposas que la recorren |
+| `I` | 06 · Initialization | televisor → una mano sale de la pantalla a invitarte |
+| `W` | 07 · Set up our new world | el planeta con anillo (el de la primera prueba) |
+| `C` | 08 · And let's begin the simulation | rejilla plana → líneas de campo con garganta (agujero de gusano) |
+| `P` | 09 · If I'm a set of point | punto → plano con ejes y curva → "POINT OF INFLECTION" |
+| `O` | 11 · If I'm a circle | naranja → corte con gajos → la circunferencia sale con su radio y "C = 2πr" |
 
-Cada carta se dispara con **una sola tecla**. En las de dos etapas, el enjambre forma la
-figura A, espera `hold` segundos y un barrido de arriba hacia abajo la convierte en la B.
-El movimiento no es una animación: son los agentes persiguiendo sus nuevos puntos.
+Los tiempos de cada etapa (`at`, `sweep`) están en `src/cards/cards.js`; ninguna carta pasa
+de ~2.4 s. El movimiento entre figuras no es una animación: son los agentes persiguiendo
+sus nuevos puntos (steering).
 
 ### Otros controles
 - `espacio`: disolver la figura y volver a la señal (el flow field).
-- `←` `→`: velocidad de giro de la figura.
-- `Q` / `E`: torcer el flow field (todo el "clima" de la pantalla).
-- `W` (mantener): turbulencia. `H` (mantener): vertical hold del televisor.
-- `F`: pantalla completa. Ratón: inclinarse un poco alrededor de la pantalla.
+- `← →`: velocidad de giro/balanceo de la figura.
+- `↑ ↓`: torcer el flow field (todo el "clima" de la pantalla).
+- `shift` (mantener): turbulencia. `` ` `` (mantener): vertical hold del televisor.
+- `enter`: pantalla completa. Ratón: inclinarse un poco alrededor de la pantalla.
 
 ## Cómo piensa cada agente (para la rúbrica)
 
@@ -53,15 +57,15 @@ El movimiento no es una animación: son los agentes persiguiendo sus nuevos punt
 ```json
 {
   "figures": {
-    "planet": { "file": "mi-planeta.glb", "rotate": [0, 0, 0], "colors": ["#10306e", "#4fbf6a", "#f2d79b"] }
+    "planet": { "file": "mi-planeta.glb", "rotate": [0, 0, 0] }
   }
 }
 ```
 
-Las llaves son los ids de `src/figures/registry.js` (`plug`, `goggles_cross`, `columns`,
-`box_solid`, `planet`, `monitor_on`, `sine_tangents`…). El GLB tiene prioridad sobre la
-versión procedural, se centra y se ajusta solo a radio 1, y se colorea de abajo (tinta 0)
-a arriba (tinta 1) con la rampa de `colors`. Quita la entrada para volver a la procedural.
+Las llaves son los ids de `src/figures/registry.js` (`plug_apart`, `plug_joined`, `goggles`,
+`rosary`, `human`, `skeleton`, `galaxy`, `planet`, `tv_hand`, `wormhole`, `orange_ring`…). El
+GLB tiene prioridad sobre la versión procedural, se centra y se ajusta solo a radio 1, y se
+colorea de abajo a arriba con la paleta global. Quita la entrada para volver a la procedural.
 Al disparar una carta, el estado muestra de dónde salió cada figura (`procedural`, `glb:…`).
 
 ## Desarrollo
@@ -79,6 +83,6 @@ corre con `.github/workflows/deploy.yml` al hacer push a `main`.
 
 ```
 src/core/      params, flowField, swarm (steering), background (señal), crt (post-proceso)
-src/figures/   sampling (primitivas → puntos), procedural (las figuras), sampleGLB, registry
-src/cards/     cards.js (la lista de metáforas y sus teclas), cardPlayer.js
+src/figures/   sampling (primitivas → puntos), una carpeta-archivo por metáfora (plug.js, body.js…), sampleGLB, registry
+src/cards/     cards.js (la lista de metáforas, sus teclas y tiempos), cardPlayer.js
 ```

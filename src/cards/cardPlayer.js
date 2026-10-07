@@ -2,9 +2,11 @@ import { loadFigure } from '../figures/registry.js';
 
 // Runs the card the performer just triggered. The only clock here starts at
 // the keypress; nothing ever starts a card on its own.
-export function createCardPlayer({ swarm, params, count, onStatus }) {
+export function createCardPlayer({ swarm, count, onStatus }) {
   let active = null;
   let elapsed = 0;
+  let nextStage = 1;
+  let figures = [];
   let token = 0;
 
   return {
@@ -14,15 +16,15 @@ export function createCardPlayer({ swarm, params, count, onStatus }) {
 
     async trigger(card) {
       const mine = ++token;
-      onStatus?.(`cargando… ${card.label}`);
-      const figures = await Promise.all(card.stages.map((id) => loadFigure(id, count)));
+      const loaded = await Promise.all(card.stages.map((s) => loadFigure(s.figure, count)));
       if (mine !== token) return; // a newer key was pressed while this loaded
 
-      swarm.setCard(figures[0], figures[1] ?? null);
-      params.sweep.value = card.sweep ?? 2.0;
+      figures = loaded;
       active = card;
       elapsed = 0;
-      const sources = [...new Set(figures.map((f) => f.source))].join(', ');
+      nextStage = 1;
+      swarm.begin(figures[0]);
+      const sources = [...new Set(loaded.map((f) => f.source))].join(', ');
       onStatus?.(`${card.label}  [${sources}]`);
     },
 
@@ -34,10 +36,12 @@ export function createCardPlayer({ swarm, params, count, onStatus }) {
     },
 
     update(dt) {
-      if (!active || active.stages.length < 2) return;
+      if (!active) return;
       elapsed += dt;
-      const t = elapsed - (active.hold ?? 1.5);
-      if (t >= 0) params.transformT.value = Math.min(t, (active.sweep ?? 2.0) + 2.0);
+      while (nextStage < active.stages.length && elapsed >= active.stages[nextStage].at) {
+        swarm.morphTo(figures[nextStage], active.sweep ?? 0.6);
+        nextStage++;
+      }
     }
   };
 }

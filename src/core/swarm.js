@@ -44,8 +44,14 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
 
   const rotY = (v, a) => vec3(v.x.mul(cos(a)).add(v.z.mul(sin(a))), v.y, v.z.mul(cos(a)).sub(v.x.mul(sin(a))));
   const rotX = (v, a) => vec3(v.x, v.y.mul(cos(a)).sub(v.z.mul(sin(a))), v.y.mul(sin(a)).add(v.z.mul(cos(a))));
-  const ramp = (c0, c1, c2, t) =>
-    mix(mix(c0, c1, smoothstep(0.0, 0.5, t)), c2, smoothstep(0.5, 1.0, t));
+  // tint 0..1 -> the 5-stop palette ramp
+  const ramp = (t) => {
+    const s = t.clamp(0.0, 1.0).mul(4.0);
+    const a = mix(params.pal0, params.pal1, s.clamp(0.0, 1.0));
+    const b = mix(a, params.pal2, s.sub(1.0).clamp(0.0, 1.0));
+    const c = mix(b, params.pal3, s.sub(2.0).clamp(0.0, 1.0));
+    return mix(c, params.pal4, s.sub(3.0).clamp(0.0, 1.0));
+  };
 
   const init = Fn(() => {
     const i = instanceIndex;
@@ -55,7 +61,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     positions.element(i).assign(vec3(a, b, c).mul(4.5));
     velocities.element(i).assign(vec3(0.0));
     blends.element(i).assign(0.0);
-    colors.element(i).assign(ramp(params.colA0, params.colA1, params.colA2, hash(i.add(uint(5)))));
+    colors.element(i).assign(ramp(hash(i.add(uint(5))).mul(0.5)));
   })().compute(count).setName('Swarm init');
 
   const update = Fn(() => {
@@ -77,7 +83,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     const delay = oneMinus(height).mul(0.7).add(rndDelay.mul(0.3));
     const started = params.transformT.greaterThanEqual(0.0);
     const wantsB = select(started.and(params.transformT.greaterThanEqual(delay.mul(params.sweep))), 1.0, 0.0);
-    const rate = dt.div(0.8);
+    const rate = dt.div(0.3);
     const moved = b0.add(wantsB.sub(b0).clamp(rate.negate(), rate));
     const blend = select(params.blendReset.greaterThan(0.5), 0.0, moved);
     const eased = smoothstep(0.0, 1.0, blend);
@@ -102,7 +108,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     const desired = mix(drift, chase, params.hasTarget);
 
     // STEERING: limited force toward the desired velocity.
-    const steer = desired.sub(v0);
+    const steer = desired.sub(v0).mul(params.steerGain);
     const steerLen = steer.length();
     const limited = steer.mul(min(params.maxForce.div(max(steerLen, 0.0001)), 1.0));
     const v1 = v0.add(limited.mul(dt));
@@ -116,9 +122,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     velocities.element(i).assign(v2);
     blends.element(i).assign(blend);
 
-    const colorA = ramp(params.colA0, params.colA1, params.colA2, tA.w);
-    const colorB = ramp(params.colB0, params.colB1, params.colB2, tB.w);
-    colors.element(i).assign(mix(colorA, colorB, eased));
+    colors.element(i).assign(mix(ramp(tA.w), ramp(tB.w), eased));
   })().compute(count).setName('Swarm update');
 
   // RENDER ------------------------------------------------------------
@@ -143,36 +147,60 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
 
   let hasTargetGoal = 0;
   let resetFrames = 0;
+  let morphing = false;
+  let morphElapsed = 0;
+  let morphLength = 0;
 
   renderer.compute(init);
 
+  // B becomes the new A (same points), so a finished morph can be followed
+  // by another one without any visible jump.
+  const commit = () => {
+    targetAData.array.set(targetBData.array);
+    targetAData.needsUpdate = true;
+    params.transformT.value = -1;
+    resetFrames = 1; // every agent's blend returns to 0, now pointing at the same cloud
+    morphing = false;
+  };
+
   return {
     count,
-    // Point the whole swarm at a card: stage A (and optionally B).
-    setCard(figureA, figureB) {
-      const second = figureB ?? figureA;
-      targetAData.array.set(figureA.points);
+    // A card starts: the whole swarm flows to this figure.
+    begin(figure) {
+      targetAData.array.set(figure.points);
       targetAData.needsUpdate = true;
-      targetBData.array.set(second.points);
+      targetBData.array.set(figure.points);
       targetBData.needsUpdate = true;
-      params.colA0.value.set(figureA.colors[0]);
-      params.colA1.value.set(figureA.colors[1]);
-      params.colA2.value.set(figureA.colors[2]);
-      params.colB0.value.set(second.colors[0]);
-      params.colB1.value.set(second.colors[1]);
-      params.colB2.value.set(second.colors[2]);
       params.transformT.value = -1;
-      resetFrames = 1; // one frame where every agent snaps back to stage A
+      morphing = false;
+      resetFrames = 1;
       hasTargetGoal = 1;
+    },
+    // The next figure of the card: a sweep melts the current one into it.
+    morphTo(figure, sweepSeconds) {
+      if (morphing) commit();
+      targetBData.array.set(figure.points);
+      targetBData.needsUpdate = true;
+      params.sweep.value = sweepSeconds;
+      params.transformT.value = 0;
+      morphing = true;
+      morphElapsed = 0;
+      morphLength = sweepSeconds + 0.45;
     },
     // Let go of the figure: agents go back to drifting on the flow field.
     release() {
       params.transformT.value = -1;
+      morphing = false;
       hasTargetGoal = 0;
     },
     update(dt) {
       params.dt.value = dt;
-      params.hasTarget.value += (hasTargetGoal - params.hasTarget.value) * (1 - Math.exp(-dt * 3.0));
+      params.hasTarget.value += (hasTargetGoal - params.hasTarget.value) * (1 - Math.exp(-dt * 6.0));
+      if (morphing) {
+        morphElapsed += dt;
+        params.transformT.value = morphElapsed;
+        if (morphElapsed >= morphLength) commit();
+      }
       params.blendReset.value = resetFrames > 0 ? 1 : 0;
       if (resetFrames > 0) resetFrames--;
       renderer.compute(update);

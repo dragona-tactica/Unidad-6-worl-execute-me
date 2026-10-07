@@ -9,6 +9,7 @@ import { createBackground } from './core/background.js';
 import { createSwarm } from './core/swarm.js';
 import { createCRT } from './core/crt.js';
 import { CARDS } from './cards/cards.js';
+import { FIGURE_IDS, loadFigure } from './figures/registry.js';
 import { createCardPlayer } from './cards/cardPlayer.js';
 
 const FIGURE_AGENTS = 160000;
@@ -22,10 +23,10 @@ async function main() {
   }
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#030204');
+  scene.background = new THREE.Color('#0a0118');
 
   const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
-  camera.position.set(0, 0.3, 9.5);
+  camera.position.set(0, -0.15, 9.5);
 
   const renderer = new THREE.WebGPURenderer({ antialias: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -37,6 +38,7 @@ async function main() {
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
   orbit.enablePan = false;
+  orbit.target.set(0, -0.55, 0); // figures sit a little above center, clear of the HUD
   orbit.minDistance = 4;
   orbit.maxDistance = 16;
   orbit.minAzimuthAngle = -0.7;
@@ -56,13 +58,12 @@ async function main() {
   hud.className = 'hud';
   hud.innerHTML = `
     <div id="status">señal</div>
-    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Digit', '')}</b> ${c.label.split(' · ')[1]}</span>`).join('')}</div>
-    <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>Q / E</b> torcer el campo · <b>W</b> turbulencia · <b>H</b> vertical hold · <b>F</b> pantalla completa</div>`;
+    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '')}</b> ${c.label.split(' · ')[1]}</span>`).join('')}</div>
+    <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');
   const player = createCardPlayer({
     swarm,
-    params,
     count: FIGURE_AGENTS,
     onStatus: (text) => (status.textContent = text)
   });
@@ -78,12 +79,20 @@ async function main() {
       event.preventDefault();
       player.dissolve();
     }
-    if (event.code === 'KeyF') {
+    if (event.code === 'Enter') {
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen?.();
     }
   });
   addEventListener('keyup', (event) => held.delete(event.code));
+
+  // Build every figure in the background so a keypress never waits.
+  (async () => {
+    for (const id of FIGURE_IDS) {
+      await loadFigure(id, FIGURE_AGENTS);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+  })();
 
   addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight;
@@ -92,26 +101,36 @@ async function main() {
   });
 
   // LOOP --------------------------------------------------------------------
-  let spin = 0.55; // rad/s, nudged live with the arrow keys
+  let spin = 1; // multiplier on the card's own turning, nudged with the arrow keys
   let twist = 0;
   let roll = 0;
+  let angle = 0;
+  let clock = 0;
   let last = performance.now();
   renderer.setAnimationLoop(() => {
     const now = performance.now();
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
+    clock += dt;
 
     // Performer gestures — all of them only act while a key is held.
     if (held.has('ArrowRight')) spin += dt * 1.6;
     if (held.has('ArrowLeft')) spin -= dt * 1.6;
-    if (held.has('KeyQ')) twist += dt * 1.4;
-    if (held.has('KeyE')) twist -= dt * 1.4;
+    if (held.has('ArrowUp')) twist += dt * 1.4;
+    if (held.has('ArrowDown')) twist -= dt * 1.4;
     params.flowTwist.value = twist;
-    params.flowSpeed.value = held.has('KeyW') ? 0.9 : 0.25;
-    roll += ((held.has('KeyH') ? 1 : 0) - roll) * (1 - Math.exp(-dt * 6));
+    params.flowSpeed.value = held.has('ShiftLeft') || held.has('ShiftRight') ? 0.9 : 0.25;
+    roll += ((held.has('Backquote') ? 1 : 0) - roll) * (1 - Math.exp(-dt * 6));
     crt.roll.value = roll;
 
-    params.rotY.value += spin * dt;
+    // How the current figure turns: keep spinning, or rock like a stage prop.
+    const motion = player.active?.motion ?? { spin: 0.5 };
+    if (motion.sway) params.rotY.value = Math.sin(clock * 0.9) * motion.sway * spin;
+    else {
+      angle += (motion.spin ?? 0.5) * spin * dt;
+      params.rotY.value = angle;
+    }
+
     player.update(dt);
     swarm.update(dt);
     background.update();
