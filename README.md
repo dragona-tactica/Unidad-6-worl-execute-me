@@ -37,7 +37,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `J` | 31 Though we are trapped | trampa para osos y el pie de uno |
 | `B` | 33 Eggplant | berenjena → pastillas |
 | `T` | 35 Tomato | tomate → cadena de proteínas |
-| `F` | 37 Tabby cat | gato de circo |
+| `F` | 37 Tabby cat | gato de circo con banjo: modelo 3D (`public/models/banjo_cat.glb`) coloreado con la imagen de referencia |
 | `K` | 39 The only God | el cordero |
 | `X` | 41 Switch my gender | chico → chica → chico |
 | `Q` | 44 From AM to PM | el radio gira la perilla |

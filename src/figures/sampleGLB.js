@@ -5,7 +5,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // proportion to their area (so detail isn't biased toward dense meshes),
 // the cloud is centered and fitted to radius 1, and the tint ramps from
 // the model's feet (0) to its top (1).
-export async function sampleGLB(url, N, rng, { rotate = [0, 0, 0] } = {}) {
+// opts.height  scale so the model is this tall (instead of fitting radius 1)
+// opts.tintFn   (x, y, z, u, v) => tint, with u, v the 0..1 position inside the
+//               model's front view (v grows downward, like an image)
+export async function sampleGLB(url, N, rng, { rotate = [0, 0, 0], height, tintFn } = {}) {
   const gltf = await new GLTFLoader().loadAsync(url);
   gltf.scene.updateMatrixWorld(true);
 
@@ -89,9 +92,16 @@ export async function sampleGLB(url, N, rng, { rotate = [0, 0, 0] } = {}) {
     minY = Math.min(minY, out[i * 4 + 1]);
     maxY = Math.max(maxY, out[i * 4 + 1]);
   }
+  const scale = height ? height / (hi3[1] - lo3[1] || 1) : 1 / (radius || 1);
+  const width = hi3[0] - lo3[0] || 1;
+  const tall = hi3[1] - lo3[1] || 1;
   for (let i = 0; i < N; i++) {
-    for (let k = 0; k < 3; k++) out[i * 4 + k] /= radius || 1;
-    out[i * 4 + 3] = (out[i * 4 + 1] * radius - minY) / (maxY - minY || 1);
+    const rx = out[i * 4];
+    const ry = out[i * 4 + 1];
+    for (let k = 0; k < 3; k++) out[i * 4 + k] *= scale;
+    out[i * 4 + 3] = tintFn
+      ? tintFn(out[i * 4], out[i * 4 + 1], out[i * 4 + 2], (rx + width / 2) / width, 0.5 - ry / tall)
+      : (ry - (minY - 0)) / (maxY - minY || 1);
   }
   return out;
 }

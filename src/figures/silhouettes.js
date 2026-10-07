@@ -1,6 +1,7 @@
 import { parts, place } from './sampling.js';
 import { loadSilhouette, silhouettePart } from './silhouette.js';
 import { shatter } from './shatter.js';
+import { sampleGLB } from './sampleGLB.js';
 import { drop, needle } from './scenes.js';
 
 // Every figure that comes from a reference image (tools/silhouettes.json cuts
@@ -19,7 +20,6 @@ const FROM_IMAGE = {
   pills: { fit: 1.85 },
   tomato: { fit: 1.68, lo: 0.4, hi: 1 },
   molecule: { fit: 1.85 },
-  cat: { fit: 1.85, lo: 0.12, hi: 1 },
   lamb: { fit: 1.85 },
   boy: { fit: 1.85, tintFn: (r, g, b, l) => (l > 235 ? 1 : l > 215 ? 0.95 : 0.55) },
   girl: { fit: 1.85, tintFn: (r, g, b, l) => (l > 235 ? 1 : b > r + 60 ? 0.2 : 0.55) },
@@ -37,6 +37,25 @@ const figures = Object.fromEntries(Object.entries(FROM_IMAGE).map(([id, opts]) =
 const radioPart = async () => silhouettePart(await loadSilhouette('radio'), { fit: 1.76, lo: 0.2, hi: 1 });
 figures.radio_am = async () => [await radioPart(), ...needle(-0.4)];
 figures.radio_pm = async () => [await radioPart(), ...needle(0.45)];
+
+// 37 · the banjo cat as a real 3D model (public/models/banjo_cat.glb). The
+// model has no texture, so its colors come from the reference image: every
+// point takes the brightness of the picture pixel it sits in front of.
+figures.cat = async ({ N, rng }) => {
+  const sil = await loadSilhouette('cat');
+  const { w, h, data, lumaLow, lumaHigh } = sil;
+  const range = Math.max(1, lumaHigh - lumaLow);
+  const tintFn = (_x, _y, _z, u, v) => {
+    const ix = Math.min(w - 1, Math.max(0, Math.round(u * (w - 1))));
+    const iy = Math.min(h - 1, Math.max(0, Math.round(v * (h - 1))));
+    const i = (iy * w + ix) * 4;
+    if (data[i + 3] < 128) return 0.12; // outside the picture's outline: dark fur
+    const luma = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+    return 0.12 + 0.88 * Math.min(1, Math.max(0, (luma - lumaLow) / range));
+  };
+  const points = await sampleGLB(`${import.meta.env.BASE_URL}models/banjo_cat.glb`, N, rng, { height: 1.85, tintFn });
+  return { points, source: 'glb:banjo_cat.glb + imagen' };
+};
 
 // 52 · the cat in front, the train behind advancing toward us.
 const catPart = async (extra = {}) => silhouettePart(await loadSilhouette('cat'), { fit: 1.6, lo: 0.12, hi: 1, ...extra });

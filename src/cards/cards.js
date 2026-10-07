@@ -227,12 +227,12 @@ export const CARDS = [
   },
   {
     id: 'cat',
-    short: 'gato',
+    short: 'gato 3D',
     key: 'KeyF',
-    label: 'F · Un gato de circo',
+    label: 'F · Un gato de circo (modelo 3D)',
     verse: "If I'm a tabby cat",
     stages: [{ figure: 'cat' }],
-    motion: { sway: 0.3 }
+    motion: { spin: 0.55 }
   },
   {
     id: 'lamb',
