@@ -57,3 +57,19 @@ html, body {
 }
 
 #hints { color: var(--dim); }
+
+.diag {
+  position: fixed;
+  top: 10px;
+  right: 12px;
+  max-width: min(640px, 70vw);
+  margin: 0;
+  padding: 8px 10px;
+  font: 11px/1.45 var(--font);
+  white-space: pre-wrap;
+  color: #ffd6a3;
+  background: rgba(10, 1, 24, 0.82);
+  border: 1px solid rgba(255, 214, 163, 0.25);
+  pointer-events: none;
+  display: none;
+}

@@ -11,12 +11,14 @@ import { createCRT } from './core/crt.js';
 import { CARDS } from './cards/cards.js';
 import { FIGURE_IDS, loadFigure } from './figures/registry.js';
 import { createCardPlayer } from './cards/cardPlayer.js';
+import { createDiagnostics } from './ui/diagnostics.js';
 
 const FIGURE_AGENTS = 160000;
 const BACKGROUND_AGENTS = 70000;
 
 async function main() {
   const mount = document.querySelector('#app');
+  const diagnostics = createDiagnostics({ count: FIGURE_AGENTS });
   if (!WebGPU.isAvailable()) {
     mount.appendChild(WebGPU.getErrorMessage());
     throw new Error('Este proyecto requiere WebGPU para ejecutar compute shaders.');
@@ -33,6 +35,7 @@ async function main() {
   renderer.setSize(innerWidth, innerHeight);
   mount.appendChild(renderer.domElement);
   await renderer.init();
+  diagnostics.attach(renderer);
 
   // Keep the "glass" illusion: you can lean around a little, not walk behind the TV.
   const orbit = new OrbitControls(camera, renderer.domElement);
@@ -136,6 +139,7 @@ async function main() {
     background.update();
     orbit.update();
     screen.render();
+    diagnostics.tick();
   });
 }
 
