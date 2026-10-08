@@ -155,9 +155,9 @@ export const CARDS = [
     key: 'KeyD',
     label: 'D · Dinosaurio → robot humanoide',
     verse: 'Oh, we can travel',
-    stages: [{ figure: 'trex' }, { figure: 'robot', at: 1.0 }],
+    stages: [{ figure: 'dino' }, { figure: 'robot_model', at: 1.0 }],
     sweep: 0.85,
-    motion: { sway: 0.4 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'deep',
@@ -210,9 +210,9 @@ export const CARDS = [
     key: 'KeyB',
     label: 'B · Berenjena → pastillas',
     verse: "If I'm an eggplant",
-    stages: [{ figure: 'eggplant' }, { figure: 'pills', at: 0.9 }],
+    stages: [{ figure: 'eggplant_model' }, { figure: 'pills_model', at: 0.9 }],
     sweep: 0.7,
-    motion: { sway: 0.3 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'tomato',
@@ -220,9 +220,9 @@ export const CARDS = [
     key: 'KeyT',
     label: 'T · Tomate → cadena de proteínas',
     verse: "If I'm a tomato",
-    stages: [{ figure: 'tomato' }, { figure: 'molecule', at: 0.9 }],
+    stages: [{ figure: 'tomato_model' }, { figure: 'protein_model', at: 0.9 }],
     sweep: 0.7,
-    motion: { sway: 0.3 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'cat',

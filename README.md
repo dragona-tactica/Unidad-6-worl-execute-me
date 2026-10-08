@@ -29,14 +29,14 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `R` | 15 Infinity | el cohete avanza por la curva 1/x |
 | `L` | 17 Switch my current | rayo → AC / DC |
 | `V` | 19 Blind my vision | la mitad superior de la pantalla se desenfoca (confusión / claridad) |
-| `D` | 21 Oh, we can travel | dinosaurio → robot humanoide |
+| `D` | 21 Oh, we can travel | dinosaurio → robot: modelos 3D con sus propios colores |
 | `U` | 24 So deeply | modelo 3D del calamar abisal con el submarino (`public/models/abyssal_encounter.glb`), coloreado con la imagen |
 | `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
 | `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |
 | `Z` | 29 Make you happy | zorro con gafas de sol |
 | `J` | 31 Though we are trapped | trampa para osos y el pie de uno |
-| `B` | 33 Eggplant | berenjena → pastillas |
-| `T` | 35 Tomato | tomate → cadena de proteínas |
+| `B` | 33 Eggplant | berenjena → pastillas: modelos 3D con sus propios colores |
+| `T` | 35 Tomato | tomate → cadena de proteínas: modelos 3D (el tomate con su textura) |
 | `F` | 37 Tabby cat | gato de circo con banjo: modelo 3D (`public/models/banjo_cat.glb`) coloreado con la imagen de referencia |
 | `K` | 39 The only God | el cordero: modelo 3D (`public/models/sacred_lamb.glb`) coloreado con la imagen, de perfil como la referencia |
 | `X` | 41 Switch my gender | chico → chica → chico |

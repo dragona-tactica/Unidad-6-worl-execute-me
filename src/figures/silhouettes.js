@@ -2,6 +2,7 @@ import { parts, place } from './sampling.js';
 import { imageTint, loadSilhouette, silhouettePart } from './silhouette.js';
 import { shatter } from './shatter.js';
 import { sampleGLB } from './sampleGLB.js';
+import { sampleModel } from './sampleModel.js';
 import { drop, needle } from './scenes.js';
 
 // Every figure that comes from a reference image (tools/silhouettes.json cuts
@@ -85,5 +86,22 @@ figures.heart_b = async () => [
   ...drop(-0.06, -0.92, 0.8),
   place(parts.disc({ radius: 0.34, tint: 0.5 }), { pos: [0.1, -1.0, 0], scale: [1, 0.18, 1], boost: 1.2 })
 ];
+
+// Models that bring their own colors (and textures): the swarm wears those
+// colors, stretched over the palette. Keys are figure ids.
+const MODELS = {
+  dino: { file: 'dinosaurio.glb', fit: 1.9, rotate: [0, Math.PI / 2, 0], lo: 0.12, hi: 1 },
+  robot_model: { file: 'robot.fbx', height: 1.7, lo: 0.12, hi: 1 },
+  eggplant_model: { file: 'eggplant.fbx', fit: 1.6, lo: 0.1, hi: 0.9 },
+  pills_model: { file: 'pastillas.glb', fit: 2.2, lo: 0.2, hi: 1 },
+  tomato_model: { file: 'tomato.glb', fit: 1.5, lo: 0.25, hi: 1 },
+  protein_model: { file: 'proteinas.glb', fit: 1.65, flat: true, lo: 0.3, hi: 1 }
+};
+for (const [id, opts] of Object.entries(MODELS)) {
+  figures[id] = async ({ N, rng }) => ({
+    points: await sampleModel(`${import.meta.env.BASE_URL}models/${opts.file}`, N, rng, opts),
+    source: `modelo:${opts.file}`
+  });
+}
 
 export const silhouetteFigures = figures;
