@@ -20,8 +20,7 @@ export const CARDS = [
     key: 'KeyE',
     label: 'E · Enciende la línea de poder (enchufe)',
     verse: 'Switch on the power line',
-    stages: [{ figure: 'plug_apart' }, { figure: 'plug_joined', at: 0.9 }],
-    sweep: 0.7,
+    stages: [{ figure: 'plug_joined' }],
     motion: { sway: 0.45 }
   },
   {
@@ -45,22 +44,20 @@ export const CARDS = [
   },
   {
     id: 'creation',
-    short: 'humano→cosmos',
+    short: 'galaxia',
     key: 'KeyH',
-    label: 'H · Humano → esqueleto → cosmos (creación)',
+    label: 'H · La galaxia (creación)',
     verse: "And let's begin object creation",
-    stages: [{ figure: 'human' }, { figure: 'skeleton', at: 0.6 }, { figure: 'galaxy', at: 1.4 }],
-    sweep: 0.35,
+    stages: [{ figure: 'galaxy' }],
     motion: { sway: 0.5 }
   },
   {
     id: 'parameters',
     short: 'mariposas',
     key: 'KeyM',
-    label: 'M · Líneas y mariposas que las recorren (parámetros)',
+    label: 'M · Las mariposas recorren la espiral (parámetros)',
     verse: 'Fill in my data parameters',
-    stages: [{ figure: 'guide_lines' }, { figure: 'butterflies_a', at: 0.6 }, { figure: 'butterflies_b', at: 1.4 }],
-    sweep: 0.35,
+    stages: [{ figure: 'butterflies_b' }],
     motion: { spin: 0.55 }
   },
   {
@@ -85,10 +82,9 @@ export const CARDS = [
     id: 'simulation',
     short: 'campo',
     key: 'KeyC',
-    label: 'C · Líneas de campo: comienza la simulación',
+    label: 'C · Las líneas de campo: comienza la simulación',
     verse: "And let's begin the simulation",
-    stages: [{ figure: 'field_flat' }, { figure: 'wormhole', at: 0.9 }],
-    sweep: 0.7,
+    stages: [{ figure: 'wormhole' }],
     motion: { sway: 0.4 }
   },
   {

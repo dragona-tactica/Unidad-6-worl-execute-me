@@ -15,14 +15,14 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 
 | Tecla | Fragmento | Qué pasa |
 |---|---|---|
-| `E` | 01 Switch on the power line | enchufe que se conecta con chispas |
+| `E` | 01 Switch on the power line | enchufe ya conectado, con chispas (sin animación) |
 | `G` | 02 Protection | gafas de laboratorio (una sola pieza) |
 | `S` | 03 Lay down your pieces | sándwich en vista explotada → armado |
-| `H` | 04 Object creation | humano → esqueleto → galaxia |
-| `M` | 05 Data parameters | líneas y espiral → mariposas que la recorren |
+| `H` | 04 Object creation | la galaxia espiral (sin animación) |
+| `M` | 05 Data parameters | las mariposas sobre la espiral (sin animación) |
 | `I` | 06 Initialization | televisor con la mano afuera |
 | `W` | 07 New world | el planeta |
-| `C` | 08 The simulation | rejilla plana → líneas de campo (agujero de gusano) |
+| `C` | 08 The simulation | las líneas de campo con su garganta (sin animación) |
 | `P` | 09 Set of point | punto → plano con curva → "POINT OF INFLECTION" |
 | `O` | 11 Circle | rodaja de naranja con triángulo punteado y `C = 2πr` |
 | `N` | 13 Sine wave | la onda → las líneas que la contienen |
