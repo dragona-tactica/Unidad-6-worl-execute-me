@@ -71,6 +71,8 @@ SILHOUETTE_SRC="$HOME/Downloads/execute me" python3 tools/make_silhouettes.py
 ```
 
 ### Otros controles
+- `]` / botón **+ error**: abre una ventana de error más (se acumulan). `[` / botón **− error**: cierra la más reciente. También se cierran con su OK o su ×.
+- Capa de código (arriba a la izquierda): cada vez que disparas una carta, su verso se teclea como una línea de código (`execute("…")`); `espacio` teclea `signal.release();`. Nada se teclea solo.
 - `espacio`: disolver la figura y volver a la señal (el flow field).
 - `← →`: velocidad de giro/balanceo de la figura.
 - `↑ ↓`: torcer el flow field (todo el "clima" de la pantalla).
@@ -138,6 +140,7 @@ corre con `.github/workflows/deploy.yml` al hacer push a `main`.
 ## Estructura
 
 ```
+src/ui/        diagnostics, codeLayer (versos tecleados como código), errorLayer (ventanas de error)
 src/core/      params, flowField, swarm (steering), background (señal), crt (post-proceso)
 src/figures/   sampling (primitivas → puntos), un archivo por grupo de metáforas, silhouette (imágenes → volumen), shatter, match, sampleGLB, registry
 tools/         make_silhouettes.py + silhouettes.json (imágenes de referencia → máscaras)

@@ -11,6 +11,8 @@ import { createCRT } from './core/crt.js';
 import { CARDS } from './cards/cards.js';
 import { createCardPlayer } from './cards/cardPlayer.js';
 import { createDiagnostics } from './ui/diagnostics.js';
+import { createCodeLayer } from './ui/codeLayer.js';
+import { createErrorLayer } from './ui/errorLayer.js';
 
 const FIGURE_AGENTS = 160000;
 const BACKGROUND_AGENTS = 70000;
@@ -61,9 +63,21 @@ async function main() {
   hud.innerHTML = `
     <div id="status">señal</div>
     <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=').replace('Period', '.')}</b> ${c.short ?? c.label}</span>`).join('')}</div>
-    <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
+    <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa · <b>]</b> / <b>[</b> más / menos errores</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');
+
+  // Two layers above everything else, independent of the swarm: the verses
+  // typed as code, and error windows that pile up (or go away) one by one.
+  const code = createCodeLayer(document.body);
+  const errors = createErrorLayer(document.body);
+  const buttons = document.createElement('div');
+  buttons.className = 'layer-buttons';
+  buttons.innerHTML = '<button id="err-add" tabindex="-1">+ error ]</button><button id="err-del" tabindex="-1">− error [</button>';
+  document.body.append(buttons);
+  // a button must never keep the keyboard focus (space / enter would click it again)
+  buttons.querySelector('#err-add').addEventListener('click', (e) => { errors.add(); e.currentTarget.blur(); });
+  buttons.querySelector('#err-del').addEventListener('click', (e) => { errors.removeLast(); e.currentTarget.blur(); });
   const player = createCardPlayer({
     swarm,
     count: FIGURE_AGENTS,
@@ -76,10 +90,16 @@ async function main() {
     if (event.repeat) return;
     held.add(event.code);
     const card = CARDS.find((c) => c.key === event.code);
-    if (card) player.trigger(card);
+    if (card) {
+      player.trigger(card);
+      code.type(card.verse);
+    }
+    if (event.code === 'BracketRight') errors.add();
+    if (event.code === 'BracketLeft') errors.removeLast();
     if (event.code === 'Space') {
       event.preventDefault();
       player.dissolve();
+      code.release();
     }
     if (event.code === 'Enter') {
       if (document.fullscreenElement) document.exitFullscreen();
