@@ -91,7 +91,9 @@ async function main() {
   // Build every card (figures + the pairing between their stages) in the
   // background, so a keypress never waits.
   (async () => {
-    for (const card of CARDS) {
+    // with ?preview only the previewed model is prepared, so it shows up fast
+    const previewing = new URLSearchParams(location.search).get('preview');
+    for (const card of previewing ? CARDS.filter((c) => c.id === 'preview') : CARDS) {
       await player.prepare(card);
       await new Promise((resolve) => setTimeout(resolve, 0));
     }

@@ -13,6 +13,10 @@ import { loadModel } from './loadModel.js';
 //   invert     dark becomes bright
 //   tintFn     (r, g, b, luma, x, y, z) => tint, overrides the brightness mapping
 //   flat       ignore every color and tint by height instead (untextured models)
+//   only, skip RegExps tested against each mesh's name to keep / drop parts
+//   offsets    [{ match: RegExp, by: [x, y, z] }] moves matching meshes (raw model
+//              units, before centering) — e.g. to drop a guillotine blade
+//   normalize  false keeps the raw size/position (used when composing models)
 const toLinear = new Float32Array(256).map((_, i) => {
   const c = i / 255;
   return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -33,10 +37,13 @@ function textureData(texture) {
   return textures.get(texture);
 }
 
-function collect(root) {
+function collect(root, { only, skip, offsets = [] } = {}) {
   const tris = []; // { mesh data per triangle chunk }
   root.traverse((node) => {
     if (!node.isMesh) return;
+    if (only && !only.test(node.name)) return;
+    if (skip && skip.test(node.name)) return;
+    const shift = offsets.filter((o) => o.match.test(node.name)).reduce((acc, o) => [acc[0] + o.by[0], acc[1] + o.by[1], acc[2] + o.by[2]], [0, 0, 0]);
     const geometry = node.geometry;
     const pos = geometry.attributes.position;
     const uv = geometry.attributes.uv;
@@ -55,9 +62,9 @@ function collect(root) {
         for (let k = 0; k < 3; k++) {
           const i = index ? index.getX(g.start + t * 3 + k) : g.start + t * 3 + k;
           v.fromBufferAttribute(pos, i).applyMatrix4(node.matrixWorld);
-          chunk.p[t * 9 + k * 3] = v.x;
-          chunk.p[t * 9 + k * 3 + 1] = v.y;
-          chunk.p[t * 9 + k * 3 + 2] = v.z;
+          chunk.p[t * 9 + k * 3] = v.x + shift[0];
+          chunk.p[t * 9 + k * 3 + 1] = v.y + shift[1];
+          chunk.p[t * 9 + k * 3 + 2] = v.z + shift[2];
           if (chunk.uv) {
             chunk.uv[t * 6 + k * 2] = uv.getX(i);
             chunk.uv[t * 6 + k * 2 + 1] = uv.getY(i);
@@ -78,7 +85,7 @@ function collect(root) {
 export async function sampleModel(url, N, rng, opts = {}) {
   const { fit = 2, height, rotate = [0, 0, 0], lo = 0.18, hi = 1, invert = false, tintFn, flat = false } = opts;
   const root = await loadModel(url);
-  const chunks = collect(root);
+  const chunks = collect(root, opts);
   if (!chunks.length) throw new Error(`Modelo sin mallas: ${url}`);
 
   // area-weighted triangle picking across all chunks
@@ -192,5 +199,6 @@ export async function sampleModel(url, N, rng, opts = {}) {
     }
     out[i * 4 + 3] = Math.min(1, Math.max(0, tint));
   }
+  textures.clear(); // big textures would otherwise stay in memory
   return out;
 }

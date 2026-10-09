@@ -185,21 +185,21 @@ export const CARDS = [
   },
   {
     id: 'fox',
-    short: 'zorro',
+    short: 'pájaro',
     key: 'KeyZ',
-    label: 'Z · Un zorro feliz con gafas de sol',
+    label: 'Z · Un pájaro feliz',
     verse: 'If I can make you happy',
-    stages: [{ figure: 'fox' }],
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'bird' }],
+    motion: { sway: 0.95 }
   },
   {
     id: 'trap',
     short: 'trampa',
     key: 'KeyJ',
-    label: 'J · Trampa para osos y el pie de uno',
+    label: 'J · La trampa para osos (modelo 3D)',
     verse: 'Though we are trapped',
-    stages: [{ figure: 'beartrap' }],
-    motion: { sway: 0.25 }
+    stages: [{ figure: 'trap_model' }],
+    motion: { sway: 0.95 }
   },
   {
     id: 'eggplant',
@@ -241,33 +241,32 @@ export const CARDS = [
   },
   {
     id: 'gender',
-    short: 'chico↔chica',
+    short: 'chico→chica',
     key: 'KeyX',
-    label: 'X · El chico se cambia por la chica y viceversa',
+    label: 'X · El chico se transforma en la chica (modelos 3D)',
     verse: 'Switch my gender',
-    stages: [{ figure: 'boy' }, { figure: 'girl', at: 0.7 }, { figure: 'boy', at: 1.45 }],
-    sweep: 0.4,
-    motion: { sway: 0.2 }
+    stages: [{ figure: 'boy_model' }, { figure: 'girl_model', at: 1.0 }],
+    sweep: 0.8,
+    motion: { sway: 0.95 }
   },
   {
     id: 'radio',
     short: 'radio',
     key: 'KeyQ',
-    label: 'Q · La perilla del radio cambia de frecuencia',
+    label: 'Q · El radio de frecuencia (modelo 3D)',
     verse: 'From AM to PM',
-    stages: [{ figure: 'radio_am' }, { figure: 'radio_pm', at: 0.9 }],
-    sweep: 0.6,
-    motion: { sway: 0.18 }
+    stages: [{ figure: 'radio_model' }],
+    motion: { sway: 0.95 }
   },
   {
     id: 'mouse',
     short: 'ratón→elefante',
     key: 'Digit1',
-    label: '1 · El ratón se transforma en elefante',
+    label: '1 · El ratón se transforma en elefante (modelos 3D)',
     verse: 'To S, to M',
-    stages: [{ figure: 'mouse' }, { figure: 'elephant', at: 0.9 }],
-    sweep: 0.7,
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'mouse_model' }, { figure: 'elephant_model', at: 1.0 }],
+    sweep: 0.8,
+    motion: { sway: 0.95 }
   },
   {
     id: 'hole',
@@ -311,30 +310,29 @@ export const CARDS = [
     id: 'leave',
     short: 'gato y tren',
     key: 'Digit5',
-    label: '5 · El gato y el tren que avanza',
+    label: '5 · El gato y el tren que pasa detrás (modelos 3D)',
     verse: 'You have left',
-    stages: [{ figure: 'cat_train_far' }, { figure: 'cat_train_near', at: 0.8 }],
-    sweep: 0.9,
-    motion: { sway: 0.2 }
+    stages: [{ figure: 'cat_train_a' }, { figure: 'cat_train_b', at: 0.9 }],
+    sweep: 1.1,
+    motion: { sway: 0.55 }
   },
   {
     id: 'isolation',
     short: 'tren en el desierto',
     key: 'Digit6',
-    label: '6 · El tren solo en el desierto',
+    label: '6 · El tren solo en el desierto (modelo 3D)',
     verse: 'You have left me in isolation',
-    stages: [{ figure: 'desert' }],
-    motion: { sway: 0.25 }
+    stages: [{ figure: 'train_desert' }],
+    motion: { sway: 0.7 }
   },
   {
     id: 'fragments',
-    short: 'gato roto',
+    short: 'espejo roto',
     key: 'Digit7',
-    label: '7 · La silueta del gato se fragmenta',
+    label: '7 · El espejo roto (modelo 3D)',
     verse: 'Erase all the pointless fragments',
-    stages: [{ figure: 'cat_whole' }, { figure: 'cat_shattered', at: 0.8 }],
-    sweep: 0.5,
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'mirror_model' }],
+    motion: { sway: 0.95 }
   },
   {
     id: 'heart',
@@ -368,11 +366,11 @@ export const CARDS = [
     id: 'guillotine',
     short: 'guillotina',
     key: 'Minus',
-    label: '− · La guillotina y el filo que cae',
+    label: '− · La guillotina y el filo que cae (modelo 3D)',
     verse: 'Execution, execution',
     stages: [{ figure: 'guillotine_up' }, { figure: 'guillotine_down', at: 1.0 }],
     sweep: 0.3,
-    motion: { sway: 0.3 }
+    motion: { sway: 0.95 }
   },
   {
     id: 'count',
@@ -391,5 +389,9 @@ export const CARDS = [
       { figure: 'count_6', at: 2.0 }
     ],
     motion: { sway: 0.2 }
-  }
+  },
+  // dev tool, only when the URL has ?preview=... (see figures/registry.js)
+  ...(new URLSearchParams(location.search).get('preview')
+    ? [{ id: 'preview', short: 'vista previa', key: 'Backslash', label: '\\ · Vista previa de un modelo', stages: [{ figure: '__preview' }], motion: { sway: 0.95 } }]
+    : [])
 ];

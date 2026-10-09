@@ -10,6 +10,8 @@ import { planet } from './world.js';
 import { fieldFlat, wormhole } from './field.js';
 import { pointOnly, pointPlane, pointLabel } from './point.js';
 import { orangeSlice } from './orange.js';
+import { sampleModel } from './sampleModel.js';
+import { modelScenes } from './modelScenes.js';
 import { silhouetteFigures } from './silhouettes.js';
 import { squidDeep, squidLit, vrHead, puzzleApart, puzzleDone, guillotineUp, guillotineDown, chladniStage, countStage } from './scenes.js';
 import { sineOnly, sineGrid, rocketStart, rocketMid, rocketEnd, lightning, acdc, confusion } from './math.js';
@@ -62,8 +64,22 @@ const FIGURES = {
   guillotine_down: guillotineDown,
   ...Object.fromEntries([0, 1, 2, 3, 4, 5, 6].map((k) => [`chladni_${k}`, () => chladniStage(k)])),
   ...Object.fromEntries([1, 2, 3, 4, 5, 6].map((k) => [`count_${k}`, () => countStage(k)])),
-  ...silhouetteFigures
+  ...silhouetteFigures,
+  ...modelScenes
 };
+
+// Dev tool: open the page with ?preview=<file in public/models>&opts={json} and
+// press "\" to see any model as a figure (opts: fit, height, rotate, only, ...).
+const query = new URLSearchParams(location.search);
+if (query.get('preview')) {
+  const file = query.get('preview');
+  const raw = query.get('opts') ? JSON.parse(query.get('opts')) : {};
+  const opts = { ...raw, only: raw.only && new RegExp(raw.only), skip: raw.skip && new RegExp(raw.skip) };
+  FIGURES.__preview = async ({ N, rng }) => ({
+    points: await sampleModel(`${import.meta.env.BASE_URL}models/${file}`, N, rng, opts),
+    source: `vista previa:${file}`
+  });
+}
 
 export const FIGURE_IDS = Object.keys(FIGURES);
 

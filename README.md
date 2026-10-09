@@ -33,25 +33,25 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `U` | 24 So deeply | modelo 3D del calamar abisal con el submarino (`public/models/abyssal_encounter.glb`), coloreado con la imagen |
 | `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
 | `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |
-| `Z` | 29 Make you happy | zorro con gafas de sol |
-| `J` | 31 Though we are trapped | trampa para osos y el pie de uno |
+| `Z` | 29 Make you happy | pájaro feliz: modelo 3D (esculpido de 40 MB convertido a nube de puntos con `tools/bake_points.py`) |
+| `J` | 31 Though we are trapped | trampa para osos: modelo 3D |
 | `B` | 33 Eggplant | berenjena → pastillas: modelos 3D con sus propios colores |
 | `T` | 35 Tomato | tomate → cadena de proteínas: modelos 3D (el tomate con su textura) |
 | `F` | 37 Tabby cat | gato de circo con banjo: modelo 3D (`public/models/banjo_cat.glb`) coloreado con la imagen de referencia |
 | `K` | 39 The only God | el cordero: modelo 3D (`public/models/sacred_lamb.glb`) coloreado con la imagen, de perfil como la referencia |
-| `X` | 41 Switch my gender | chico → chica → chico |
-| `Q` | 44 From AM to PM | el radio gira la perilla |
-| `1` | 46 To S, to M | ratón → elefante |
+| `X` | 41 Switch my gender | el chico → la chica: modelos 3D (un solo archivo con los dos personajes) |
+| `Q` | 44 From AM to PM | radio de época: modelo 3D |
+| `1` | 46 To S, to M | ratón → elefante: modelos 3D |
 | `2` | 48 The trance | el hombre cae en el agujero |
 | `3` | 49 Feel your vibrations | seis placas vibran, una a una |
 | `4` | 50 Finally be completion | se completa el rompecabezas |
-| `5` | 52 You have left | el gato y el tren que avanza |
-| `6` | 53 In isolation | el tren solo en el desierto |
-| `7` | 54 Pointless fragments | la silueta del gato se fragmenta |
+| `5` | 52 You have left | el gato con el tren que pasa detrás: modelos 3D |
+| `6` | 53 In isolation | el tren solo en el desierto: modelo 3D |
+| `7` | 54 Pointless fragments | el espejo roto: modelo 3D |
 | `8` | 56 Disheartened | el corazón sangrando |
 | `9` | 57 Challenging your God | el guerrero |
 | `0` | 59 Illegal arguments | el mazo |
-| `−` | 60 Execution | la guillotina y el filo que cae |
+| `−` | 60 Execution | la guillotina: modelo 3D; el filo cae |
 | `=` | 61 Ein, dos | la cuenta del uno al seis en varios idiomas |
 
 Los fragmentos 64-76 no tienen referencia todavía. Los tiempos de cada etapa (`at`, `sweep`)
@@ -98,6 +98,11 @@ Cada etapa se empareja con la anterior (`src/figures/match.js`, orden de Morton)
 dos figuras comparten se queda quieto y el resto viaja como un solo cuerpo. Mientras el
 enjambre se mueve las partículas se agrandan, se calientan y dejan estela (la persistencia
 del fósforo sube); al reposar la imagen vuelve a ser nítida.
+
+## Ver un modelo antes de usarlo
+Abre la página con `?preview=<archivo en public/models>` (y, si hace falta, `&opts={json}` con
+`fit`, `height`, `rotate`, `only`, `skip`…) y pulsa `\`: muestra ese modelo como figura, girando.
+Así se decide la rotación y el tamaño de un modelo nuevo sin tocar el código.
 
 ## Cómo reemplazar una figura por tu propio modelo 3D
 
