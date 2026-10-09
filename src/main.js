@@ -12,6 +12,7 @@ import { CARDS } from './cards/cards.js';
 import { createCardPlayer } from './cards/cardPlayer.js';
 import { createDiagnostics } from './ui/diagnostics.js';
 import { createCodeLayer } from './ui/codeLayer.js';
+import { loadLyrics, lyricLines } from './cards/lyrics.js';
 import { createErrorLayer } from './ui/errorLayer.js';
 
 const FIGURE_AGENTS = 160000;
@@ -58,17 +59,21 @@ async function main() {
   const screen = createCRT({ renderer, scene, camera, crt });
 
   // HUD ---------------------------------------------------------------------
+  // The set list: the cards in the order of the song. Space walks through it.
+  const SET = CARDS.filter((c) => c.id !== 'preview');
+  const KEYNAME = (key) => key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=').replace('Period', '.');
   const hud = document.createElement('div');
   hud.className = 'hud';
   hud.innerHTML = `
     <div id="status">señal</div>
-    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=').replace('Period', '.')}</b> ${c.short ?? c.label}</span>`).join('')}</div>
-    <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa · <b>]</b> / <b>[</b> más / menos errores</div>`;
+    <div id="keys">${SET.map((c, i) => `<span><b>${i + 1}</b> ${c.short ?? c.label}${c.key ? ` <i>${KEYNAME(c.key)}</i>` : ''}</span>`).join('')}</div>
+    <div id="hints"><b>espacio</b> siguiente (la primera vez oculta estas indicaciones) · <b>⌫</b> anterior · <b>supr</b> disolver en señal · <b>/</b> mostrar u ocultar indicaciones · <b>A</b> aberración cromática · <b>E</b> + error · <b>R</b> − error · <b>T</b> barrido que borra los errores · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');
 
   // Two layers above everything else, independent of the swarm: the verses
-  // typed as code, and error windows that pile up (`]`) or go away (`[`).
+  // typed as code, and error windows that pile up (`e`), go away (`r`) or are
+  // wiped by a scan bar (`t`).
   const code = createCodeLayer(document.body);
   const errors = createErrorLayer(document.body);
   const player = createCardPlayer({
@@ -79,21 +84,40 @@ async function main() {
 
   // INPUT -------------------------------------------------------------------
   const held = new Set();
+  let step = -1; // where we are in the set list
+  let lyrics = null;
+  loadLyrics().then((blocks) => (lyrics = blocks));
+  let aberrationOn = false;
+  const fire = (card) => {
+    step = SET.indexOf(card);
+    player.trigger(card);
+    code.type(lyricLines(lyrics, card));
+  };
+  const letGo = () => {
+    player.dissolve();
+    code.release();
+  };
   addEventListener('keydown', (event) => {
     if (event.repeat) return;
     held.add(event.code);
     const card = CARDS.find((c) => c.key === event.code);
-    if (card) {
-      player.trigger(card);
-      code.type(card.verse);
-    }
-    if (event.code === 'BracketRight') errors.add();
-    if (event.code === 'BracketLeft') errors.removeLast();
+    if (card) fire(card);
     if (event.code === 'Space') {
       event.preventDefault();
-      player.dissolve();
-      code.release();
+      hud.style.display = 'none'; // the indications leave the screen
+      if (step + 1 < SET.length) fire(SET[step + 1]);
+      else letGo();
     }
+    if (event.code === 'Backspace') {
+      event.preventDefault();
+      if (step > 0) fire(SET[step - 1]);
+    }
+    if (event.code === 'Delete') letGo();
+    if (event.code === 'Slash') hud.style.display = hud.style.display === 'none' ? '' : 'none';
+    if (event.code === 'KeyA') aberrationOn = !aberrationOn;
+    if (event.code === 'KeyE') errors.add();
+    if (event.code === 'KeyR') errors.removeLast();
+    if (event.code === 'KeyT') errors.sweep();
     if (event.code === 'Enter') {
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen?.();
@@ -125,6 +149,13 @@ async function main() {
   let blur = 0;
   let angle = 0;
   let clock = 0;
+  let fxAberration = 0; // card effects ease in and out
+  let fxShimmer = 0;
+  let fxTurbulence = 0;
+  let fxRoll = 0;
+  let floodFor = null;
+  let floodSpawned = 0;
+  let floodAt = 0;
   let last = performance.now();
   renderer.setAnimationLoop(() => {
     const now = performance.now();
@@ -137,10 +168,34 @@ async function main() {
     if (held.has('ArrowLeft')) spin -= dt * 1.6;
     if (held.has('ArrowUp')) twist += dt * 1.4;
     if (held.has('ArrowDown')) twist -= dt * 1.4;
-    params.flowTwist.value = twist;
-    params.flowSpeed.value = held.has('ShiftLeft') || held.has('ShiftRight') ? 0.9 : 0.25;
+    const fx = player.active?.effects ?? {};
+    const ease = 1 - Math.exp(-dt * 3);
+    fxAberration += ((fx.aberration ?? 0) - fxAberration) * ease;
+    fxShimmer += ((fx.shimmer ?? 0) - fxShimmer) * ease;
+    fxTurbulence += ((fx.turbulence ?? 0) - fxTurbulence) * ease;
+    fxRoll += ((fx.roll ?? 0) - fxRoll) * ease;
+    params.flowTwist.value = twist + fxTurbulence * Math.sin(clock * 0.9) * 1.4;
+    const stirred = held.has('ShiftLeft') || held.has('ShiftRight') ? 0.9 : 0.25;
+    params.flowSpeed.value = stirred + (0.95 - stirred) * fxTurbulence;
+    params.shimmer.value = 0.025 + fxShimmer;
     roll += ((held.has('Backquote') ? 1 : 0) - roll) * (1 - Math.exp(-dt * 6));
-    crt.roll.value = roll;
+    crt.roll.value = Math.max(roll, fxRoll * (0.5 + 0.5 * Math.sin(clock * 5.0)));
+    crt.aberration.value = 0.0016 + (aberrationOn ? 0.0065 : 0) + fxAberration;
+
+    // A card whose effect is "errors pile up" opens its windows after the key
+    // press: the card's own clock decides how many are due.
+    if (player.active !== floodFor || player.elapsed < floodAt) {
+      floodFor = player.active;
+      floodSpawned = 0;
+    }
+    floodAt = player.elapsed;
+    if (fx.errors) {
+      const due = Math.min(fx.errors.count, Math.floor(player.elapsed / fx.errors.every) + 1);
+      while (floodSpawned < due) {
+        errors.add();
+        floodSpawned++;
+      }
+    }
 
     // How the current figure turns: keep spinning, or rock like a stage prop.
     const motion = player.active?.motion ?? { spin: 0.5 };

@@ -1,0 +1,4 @@
+# Pega aquí el texto de la canción, tal como la separas: una línea en blanco entre
+# estrofa y estrofa (38 estrofas). La capa de código teclea la estrofa de cada carta
+# (ver src/cards/lyrics.js). Las líneas que empiezan con # se ignoran.
+# Mientras este archivo no tenga texto, la capa usa el verso corto de cada carta.

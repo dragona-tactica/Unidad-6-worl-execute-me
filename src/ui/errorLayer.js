@@ -1,6 +1,6 @@
 // ERROR LAYER — retro "error" windows piled over the screen. It is additive:
-// each press of the add button (or `]`) opens one more, each press of the
-// remove button (or `[`) closes the newest. Independent of the swarm.
+// each press of `e` opens one more, each `r` closes the newest and `t` wipes
+// them all away with a scan bar. Independent of the swarm.
 const MESSAGES = [
   ['execute.exe', 'The instruction at 0x00000000 referenced memory at 0x00000000. The memory could not be "read".'],
   ['simulation.dll', 'Unhandled exception: world is not defined.'],
@@ -25,6 +25,7 @@ export function createErrorLayer(parent) {
   parent.append(layer);
   const open = [];
   let counter = 0;
+  let sweeping = false;
 
   const close = (dialog) => {
     const at = open.indexOf(dialog);
@@ -58,6 +59,32 @@ export function createErrorLayer(parent) {
     removeLast() {
       const dialog = open[open.length - 1];
       if (dialog) close(dialog);
+    },
+    // The screen is wiped top to bottom by a bright scan bar; every window the
+    // bar passes over is gone.
+    sweep() {
+      if (sweeping) return;
+      sweeping = true;
+      const bar = document.createElement('div');
+      bar.className = 'sweep-bar';
+      layer.append(bar);
+      const started = performance.now();
+      const length = 1100;
+      const step = (now) => {
+        const t = Math.min(1, (now - started) / length);
+        const y = t * (innerHeight + 90) - 60;
+        bar.style.transform = `translateY(${y}px)`;
+        for (const dialog of [...open]) {
+          const box = dialog.getBoundingClientRect();
+          if (box.top + box.height * 0.5 < y + 30) close(dialog);
+        }
+        if (t < 1) requestAnimationFrame(step);
+        else {
+          bar.remove();
+          sweeping = false;
+        }
+      };
+      requestAnimationFrame(step);
     },
     get count() {
       return open.length;

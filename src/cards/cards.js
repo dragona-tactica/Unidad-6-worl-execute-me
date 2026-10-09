@@ -19,7 +19,7 @@ export const CARDS = [
   {
     id: 'plug',
     short: 'enchufe',
-    key: 'KeyE',
+    key: null,
     label: 'E · Enciende la línea de poder (enchufe)',
     verse: 'Switch on the power line',
     stages: [{ figure: 'plug_joined' }],
@@ -123,7 +123,7 @@ export const CARDS = [
   {
     id: 'rocket',
     short: 'cohete',
-    key: 'KeyR',
+    key: null,
     label: 'R · El cohete avanza por la curva hacia el infinito (modelo 3D)',
     verse: 'If I approach infinity',
     stages: [{ figure: 'rocket_scene' }],
@@ -174,7 +174,7 @@ export const CARDS = [
   {
         id: 'simulations',
     short: 'pantallas',
-    key: 'KeyA',
+    key: null,
     label: 'A · Pantallas con peces saliendo de ellas (modelo 3D)',
     verse: 'Give you all the simulations',
     stages: [{ figure: 'screens_model' }],
@@ -220,7 +220,7 @@ export const CARDS = [
   {
     id: 'tomato',
     short: 'tomate→proteínas',
-    key: 'KeyT',
+    key: null,
     label: 'T · Tomate → cadena de proteínas',
     verse: "If I'm a tomato",
     stages: [{ figure: 'tomato_model' }, { figure: 'protein_model', at: 0.9 }],
@@ -405,6 +405,27 @@ export const CARDS = [
       { figure: 'count_6', at: 2.0 }
     ],
     motion: { sway: 0.2 }
+  },
+  {
+    id: 'finale_a',
+    short: 'descontrol',
+    key: null,
+    label: 'Final 1 · Todo empieza a descontrolarse: corazones y errores',
+    verse: 'Execution',
+    stages: [{ figure: 'chaos_a' }],
+    effects: { aberration: 0.006, shimmer: 0.1, turbulence: 0.6, errors: { every: 0.45, count: 6 } },
+    motion: { spin: 0.7 }
+  },
+  {
+    id: 'finale_b',
+    short: 'descontrol total',
+    key: null,
+    label: 'Final 2 · Atrapado en el amor: todo fuera de control',
+    verse: 'Trapped in love',
+    stages: [{ figure: 'chaos_a' }, { figure: 'chaos_b', at: 0.7 }],
+    sweep: 0.9,
+    effects: { aberration: 0.014, shimmer: 0.28, turbulence: 1.0, roll: 0.7, errors: { every: 0.16, count: 16 } },
+    motion: { spin: 1.5 }
   },
   // dev tool, only when the URL has ?preview=... (see figures/registry.js)
   ...(new URLSearchParams(location.search).get('preview')

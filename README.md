@@ -70,12 +70,18 @@ infla, así que gira como un cuerpo y no como un cartón. Para rehacerlas:
 SILHOUETTE_SRC="$HOME/Downloads/execute me" python3 tools/make_silhouettes.py
 ```
 
+### Cómo se presenta
+Las cartas están en el orden de la canción (`src/cards/cards.js`, la tabla de arriba sigue ese orden y al final hay dos cartas nuevas: **Final 1** y **Final 2**, el descontrol de corazones y errores).
+
+- `espacio`: pasa a la siguiente carta. La primera vez, las indicaciones salen de la pantalla. `⌫` vuelve a la anterior. `supr` disuelve la figura en señal. `/` muestra u oculta las indicaciones.
+- Las teclas de cada carta siguen sirviendo para saltar a una, salvo `A`, `E`, `R` y `T`, que ahora son efectos:
+  - `A`: enciende / apaga la aberración cromática.
+  - `E`: abre una ventana de error más (se acumulan). `R`: cierra la más reciente. `T`: un barrido de pantalla (una barra que cae de arriba abajo) que borra todos los errores.
+- Capa de código (arriba a la izquierda): al cambiar de carta teclea la estrofa de esa carta como líneas de código; la línea en blanco entre estrofas se respeta. La letra no está en el repositorio: pégala en `public/letra.txt` (una línea en blanco entre estrofas, 38 en total) y cada carta teclea la suya (`src/cards/lyrics.js` dice cuál). Sin ese archivo se usa el verso corto de cada carta.
+- Final: en **Final 1** y **Final 2** todo se descontrola (aberración, turbulencia, la imagen tiembla) y se forman corazones y ventanas de error; las ventanas se abren solas, pero solo después de pulsar la tecla de esa carta.
+
 ### Otros controles
-- `]`: abre una ventana de error más (se acumulan). `[`: cierra la más reciente. También se cierran con su OK o su ×.
-- Capa de código (arriba a la izquierda): cada vez que disparas una carta, su verso se teclea como una línea de código (`execute("…")`); `espacio` teclea `signal.release();`. Nada se teclea solo.
-- `espacio`: disolver la figura y volver a la señal (el flow field).
-- `← →`: velocidad de giro/balanceo de la figura.
-- `↑ ↓`: torcer el flow field (todo el "clima" de la pantalla).
+- `← →`: velocidad de giro/balanceo de la figura. `↑ ↓`: torcer el flow field (todo el "clima" de la pantalla).
 - `shift` (mantener): turbulencia. `` ` `` (mantener): vertical hold del televisor.
 - `enter`: pantalla completa. Ratón: inclinarse un poco alrededor de la pantalla.
 

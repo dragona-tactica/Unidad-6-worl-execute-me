@@ -6,7 +6,7 @@ import { drop } from './scenes.js';
 import { sampleAnimated } from './sampleAnimated.js';
 import { rocketBackdrop, sineFrame, sineWaveParts } from './math.js';
 import { imageTint, loadSilhouette, silhouettePart } from './silhouette.js';
-import { parts, place } from './sampling.js';
+import { group, parts, place, tube } from './sampling.js';
 
 const url = (file) => `${import.meta.env.BASE_URL}models/${file}`;
 
@@ -294,6 +294,71 @@ const moon = async ({ N, rng }) => {
   return { points, source: 'modelo:luna (baked)' };
 };
 
+// FINALE · "everything gets out of control": hearts and error windows, many
+// of them, at every size and tilt. The hearts are the supplied heart model
+// copied around; the windows are drawn from parts (frame, title bar, close
+// box, icon, text lines).
+const errorWindow = (x, y, z, s, tilt = 0) => {
+  const w = 0.5;
+  const h = 0.34;
+  const edge = (a, b) => tube(a, b, 0.011, 0.78, 2);
+  return group(
+    [
+      edge([-w / 2, -h / 2, 0], [w / 2, -h / 2, 0]),
+      edge([-w / 2, h / 2, 0], [w / 2, h / 2, 0]),
+      edge([-w / 2, -h / 2, 0], [-w / 2, h / 2, 0]),
+      edge([w / 2, -h / 2, 0], [w / 2, h / 2, 0]),
+      place(parts.plane({ w, h: 0.07, tint: 0.4 }), { pos: [0, h / 2 - 0.035, 0], boost: 3 }),
+      tube([w / 2 - 0.06, h / 2 - 0.058, 0.01], [w / 2 - 0.02, h / 2 - 0.012, 0.01], 0.008, 1, 3),
+      tube([w / 2 - 0.02, h / 2 - 0.058, 0.01], [w / 2 - 0.06, h / 2 - 0.012, 0.01], 0.008, 1, 3),
+      place(parts.disc({ radius: 0.055, tint: 0.55 }), { pos: [-0.15, -0.02, 0.01], boost: 3 }),
+      tube([-0.17, -0.04, 0.02], [-0.13, 0.0, 0.02], 0.008, 1, 3),
+      tube([-0.13, -0.04, 0.02], [-0.17, 0.0, 0.02], 0.008, 1, 3),
+      tube([-0.06, 0.02, 0.01], [0.19, 0.02, 0.01], 0.008, 0.95, 2),
+      tube([-0.06, -0.03, 0.01], [0.15, -0.03, 0.01], 0.008, 0.95, 2),
+      tube([-0.06, -0.08, 0.01], [0.1, -0.08, 0.01], 0.008, 0.95, 2)
+    ],
+    { pos: [x, y, z], rot: [0, 0, tilt], scale: s }
+  );
+};
+
+// [x, y, z, scale, turnY, tiltZ]
+const HEARTS_A = [[-0.95, 0.5, 0, 0.5, 0.3, 0.15], [0.05, -0.05, 0.3, 0.8, -0.2, 0], [0.95, 0.45, -0.1, 0.5, -0.4, -0.2]];
+const HEARTS_B = [
+  ...HEARTS_A,
+  [-0.55, -0.7, 0.2, 0.4, 0.6, 0.35], [0.7, -0.65, 0.15, 0.45, -0.7, -0.3], [-1.15, -0.1, -0.2, 0.35, 0.9, -0.2],
+  [1.2, -0.05, 0, 0.35, -0.9, 0.3], [0.1, 0.85, -0.2, 0.4, 0.2, 0.1], [-0.3, 0.2, 0.5, 0.3, 1.2, 0.4]
+];
+const ERRORS_A = [[-0.5, -0.55, 0.1, 1, 0.08], [0.6, -0.5, 0, 0.9, -0.1], [0.05, 0.85, -0.1, 0.8, 0.04]];
+const ERRORS_B = [
+  ...ERRORS_A,
+  [-1.05, 0.7, 0.1, 0.7, -0.25], [1.1, 0.8, 0.1, 0.65, 0.3], [-1.1, -0.65, 0, 0.75, 0.2],
+  [1.15, -0.75, 0.2, 0.7, -0.35], [-0.2, 0.3, 0.6, 0.6, 0.5]
+];
+
+const chaos = (hearts, errors) => async ({ N, rng }) => {
+  const nHearts = Math.round(N * 0.55);
+  // one heart cloud, copied to every position with its own size and turn
+  const base = await sampleModel(url('heart.glb'), 36000, rng, { fit: 1.0, lo: 0.1, hi: 1 });
+  const points = new Float32Array(N * 4);
+  for (let i = 0; i < nHearts; i++) {
+    const [x, y, z, k, turn, tilt] = hearts[i % hearts.length];
+    const b = ((i * 7919 + ((rng() * 36000) | 0)) % 36000) * 4;
+    const cx = base[b] * k;
+    const cy = base[b + 1] * k;
+    const cz = base[b + 2] * k;
+    const px = cx * Math.cos(turn) + cz * Math.sin(turn);
+    const pz = -cx * Math.sin(turn) + cz * Math.cos(turn);
+    points[i * 4] = px * Math.cos(tilt) - cy * Math.sin(tilt) + x;
+    points[i * 4 + 1] = px * Math.sin(tilt) + cy * Math.cos(tilt) + y;
+    points[i * 4 + 2] = pz + z;
+    points[i * 4 + 3] = base[b + 3];
+  }
+  const windows = sampleParts(errors.flatMap(([x, y, z, k, tilt]) => errorWindow(x, y, z, k, tilt)), N - nHearts, rng);
+  points.set(windows, nHearts * 4);
+  return { points, source: 'modelo:corazón ×' + hearts.length + ' + errores ×' + errors.length };
+};
+
 export const modelScenes = {
   radio_model: model('vintage_radio.glb', { fit: 2.1, lo: 0.15 }),
   boy_model: model('boy_girl.glb', { height: 1.9, only: BOY, lo: 0.12 }),
@@ -319,5 +384,7 @@ export const modelScenes = {
   heart_model_b: heartB,
   gavel_model: gavel,
   sun_model: sun,
-  moon_model: moon
+  moon_model: moon,
+  chaos_a: chaos(HEARTS_A, ERRORS_A),
+  chaos_b: chaos(HEARTS_B, ERRORS_B)
 };
