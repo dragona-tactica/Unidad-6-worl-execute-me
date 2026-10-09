@@ -71,7 +71,7 @@ SILHOUETTE_SRC="$HOME/Downloads/execute me" python3 tools/make_silhouettes.py
 ```
 
 ### Otros controles
-- `]` / botón **+ error**: abre una ventana de error más (se acumulan). `[` / botón **− error**: cierra la más reciente. También se cierran con su OK o su ×.
+- `]`: abre una ventana de error más (se acumulan). `[`: cierra la más reciente. También se cierran con su OK o su ×.
 - Capa de código (arriba a la izquierda): cada vez que disparas una carta, su verso se teclea como una línea de código (`execute("…")`); `espacio` teclea `signal.release();`. Nada se teclea solo.
 - `espacio`: disolver la figura y volver a la señal (el flow field).
 - `← →`: velocidad de giro/balanceo de la figura.

@@ -116,53 +116,34 @@ html, body {
 }
 @keyframes blink { to { visibility: hidden; } }
 
-.layer-buttons {
-  position: fixed;
-  top: 14px;
-  right: 16px;
-  display: flex;
-  gap: 8px;
-  z-index: 60;
-}
-.layer-buttons button {
-  font: 600 12px var(--font);
-  color: #ffd6a3;
-  background: rgba(8, 3, 22, 0.82);
-  border: 1px solid rgba(255, 156, 120, 0.45);
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-.layer-buttons button:hover { background: rgba(70, 20, 90, 0.9); }
-.layer-buttons button:active { transform: translateY(1px); }
-
 .error-layer { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
 .error-dialog {
   position: absolute;
-  width: min(300px, 70vw);
+  width: min(210px, 60vw);
+  opacity: 0.8;
   background: #d9d6e4;
   color: #1b1030;
   border: 2px solid #f5f2ff;
   border-right-color: #6d6585;
   border-bottom-color: #6d6585;
   box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.5);
-  font: 12px/1.4 var(--font);
+  font: 10px/1.35 var(--font);
   pointer-events: auto;
   animation: pop 0.14s ease-out;
 }
-.error-dialog.leaving { opacity: 0; transform: scale(0.92); transition: 0.14s; }
-@keyframes pop { from { transform: scale(0.85); opacity: 0; } }
+.error-dialog.leaving { opacity: 0 !important; transform: scale(0.92); transition: 0.14s; }
+@keyframes pop { from { transform: scale(0.85); opacity: 0; } to { opacity: 0.8; } }
 .error-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 3px 4px 3px 8px;
+  padding: 2px 3px 2px 6px;
   background: linear-gradient(90deg, #4b1a8a, #b042ff);
   color: #fff;
   font-weight: 700;
 }
 .error-x, .error-ok {
-  font: 700 12px var(--font);
+  font: 700 10px var(--font);
   color: #1b1030;
   background: #d9d6e4;
   border: 2px solid #f5f2ff;
@@ -170,14 +151,15 @@ html, body {
   border-bottom-color: #6d6585;
   cursor: pointer;
 }
-.error-x { width: 18px; height: 16px; line-height: 10px; padding: 0; }
-.error-ok { min-width: 70px; padding: 3px 10px; }
-.error-body { display: flex; gap: 10px; padding: 12px 12px 6px; }
+.error-x { width: 14px; height: 13px; line-height: 8px; padding: 0; }
+.error-ok { min-width: 54px; padding: 1px 8px; }
+.error-body { display: flex; gap: 8px; padding: 8px 8px 4px; }
 .error-body p { margin: 0; }
 .error-icon {
   flex: none;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
   border-radius: 50%;
   background: #e0245e;
   color: #fff;
@@ -185,4 +167,4 @@ html, body {
   display: grid;
   place-items: center;
 }
-.error-actions { display: flex; justify-content: center; padding: 8px 0 10px; }
+.error-actions { display: flex; justify-content: center; padding: 4px 0 7px; }

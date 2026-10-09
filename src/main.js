@@ -68,16 +68,9 @@ async function main() {
   const status = hud.querySelector('#status');
 
   // Two layers above everything else, independent of the swarm: the verses
-  // typed as code, and error windows that pile up (or go away) one by one.
+  // typed as code, and error windows that pile up (`]`) or go away (`[`).
   const code = createCodeLayer(document.body);
   const errors = createErrorLayer(document.body);
-  const buttons = document.createElement('div');
-  buttons.className = 'layer-buttons';
-  buttons.innerHTML = '<button id="err-add" tabindex="-1">+ error ]</button><button id="err-del" tabindex="-1">− error [</button>';
-  document.body.append(buttons);
-  // a button must never keep the keyboard focus (space / enter would click it again)
-  buttons.querySelector('#err-add').addEventListener('click', (e) => { errors.add(); e.currentTarget.blur(); });
-  buttons.querySelector('#err-del').addEventListener('click', (e) => { errors.removeLast(); e.currentTarget.blur(); });
   const player = createCardPlayer({
     swarm,
     count: FIGURE_AGENTS,
