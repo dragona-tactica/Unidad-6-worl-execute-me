@@ -60,7 +60,7 @@ async function main() {
   hud.className = 'hud';
   hud.innerHTML = `
     <div id="status">señal</div>
-    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=')}</b> ${c.short ?? c.label}</span>`).join('')}</div>
+    <div id="keys">${CARDS.map((c) => `<span><b>${c.key.replace('Key', '').replace('Digit', '').replace('Minus', '−').replace('Equal', '=').replace('Period', '.')}</b> ${c.short ?? c.label}</span>`).join('')}</div>
     <div id="hints"><b>espacio</b> disolver en señal · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');

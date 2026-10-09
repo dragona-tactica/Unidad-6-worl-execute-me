@@ -264,6 +264,36 @@ const gavel = async ({ N, rng }) => {
   };
 };
 
+// "From AM to PM" · the sun melts into the moon. The sun is a flat decoration
+// (one orange material): hot peach in the middle, orange toward the rays. The
+// moon is a 50 MB sculpt (a crescent with a face and a star) baked to points
+// with tools/bake_points.py.
+const sun = async ({ N, rng }) => ({
+  points: await sampleGLB(url('sun_decoration.glb'), N, rng, {
+    height: 1.9,
+    tintFn: (_x, _y, _z, u, v) => {
+      const r = Math.min(1, Math.hypot(u - 0.5, v - 0.5) * 2);
+      return Math.min(1, 1.0 - 0.38 * r * r + (rng() - 0.5) * 0.06);
+    }
+  }),
+  source: 'modelo:sol'
+});
+const moon = async ({ N, rng }) => {
+  const points = await sampleBaked(url('moon.bin'), N, rng, { fit: 1.9, rotate: 0, tintFn: (_part, _x, _y, _z, hy) => hy });
+  // the front of the relief (face, nose, star) catches the light, the back stays violet
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (let i = 0; i < N; i++) {
+    lo = Math.min(lo, points[i * 4 + 2]);
+    hi = Math.max(hi, points[i * 4 + 2]);
+  }
+  for (let i = 0; i < N; i++) {
+    const front = (points[i * 4 + 2] - lo) / (hi - lo || 1);
+    points[i * 4 + 3] = 0.2 + 0.5 * front * front + 0.12 * points[i * 4 + 3];
+  }
+  return { points, source: 'modelo:luna (baked)' };
+};
+
 export const modelScenes = {
   radio_model: model('vintage_radio.glb', { fit: 2.1, lo: 0.15 }),
   boy_model: model('boy_girl.glb', { height: 1.9, only: BOY, lo: 0.12 }),
@@ -287,5 +317,7 @@ export const modelScenes = {
   screens_model: screens,
   heart_model_a: heartA,
   heart_model_b: heartB,
-  gavel_model: gavel
+  gavel_model: gavel,
+  sun_model: sun,
+  moon_model: moon
 };

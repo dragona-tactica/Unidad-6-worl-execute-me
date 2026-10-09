@@ -41,6 +41,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `K` | 39 The only God | el cordero: modelo 3D (`public/models/sacred_lamb.glb`) coloreado con la imagen, de perfil como la referencia |
 | `X` | 41 Switch my gender | el chico → la chica: modelos 3D (un solo archivo con los dos personajes) |
 | `Q` | 44 From AM to PM | radio de época: modelo 3D |
+| `.` | 44 From AM to PM | el sol (modelo 3D) se funde en la luna creciente (modelo de 50 MB horneado a puntos con `tools/bake_points.py`) |
 | `1` | 46 To S, to M | ratón → elefante: modelos 3D |
 | `2` | 48 The trance | el hombre cae en el agujero |
 | `3` | 49 Feel your vibrations | seis placas vibran, una a una |

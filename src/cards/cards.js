@@ -265,6 +265,16 @@ export const CARDS = [
     motion: { sway: 0.95 }
   },
   {
+    id: 'amtopm',
+    short: 'sol→luna',
+    key: 'Period',
+    label: '. · Del AM al PM: el sol se funde en la luna (modelos 3D)',
+    verse: 'From AM to PM',
+    stages: [{ figure: 'sun_model' }, { figure: 'moon_model', at: 1.1 }],
+    sweep: 0.9,
+    motion: { sway: 0.9 }
+  },
+  {
     id: 'mouse',
     short: 'ratón→elefante',
     key: 'Digit1',
