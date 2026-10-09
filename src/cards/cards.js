@@ -74,7 +74,7 @@ export const CARDS = [
   {
     id: 'world',
     short: 'mundo',
-    key: 'KeyW',
+    key: null,
     label: 'W · Nuevo mundo',
     verse: 'Set up our new world',
     stages: [{ figure: 'planet' }],

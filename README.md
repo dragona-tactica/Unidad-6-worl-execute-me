@@ -73,8 +73,8 @@ SILHOUETTE_SRC="$HOME/Downloads/execute me" python3 tools/make_silhouettes.py
 ### Cómo se presenta
 Las cartas están en el orden de la canción (`src/cards/cards.js`, la tabla de arriba sigue ese orden y al final hay dos cartas nuevas: **Final 1** y **Final 2**, el descontrol de corazones y errores).
 
-- `espacio`: pasa a la siguiente carta. La primera vez, las indicaciones salen de la pantalla. `⌫` vuelve a la anterior. `supr` disuelve la figura en señal. `Inicio` (`Home`; en Mac `fn` + `←`) reinicia todo: vuelve al principio, borra errores y código, apaga la aberración y muestra las indicaciones. `/` muestra u oculta las indicaciones.
-- Las teclas de cada carta siguen sirviendo para saltar a una, salvo `A`, `E`, `R` y `T`, que ahora son efectos:
+- `espacio`: pasa a la siguiente carta. La primera vez, las indicaciones salen de la pantalla. `⌫` vuelve a la anterior. `supr` disuelve la figura en señal. `W` (o `Inicio`) reinicia todo: vuelve al principio, borra errores y código, apaga la aberración y muestra las indicaciones. `/` muestra u oculta las indicaciones.
+- Las teclas de cada carta siguen sirviendo para saltar a una, salvo `A`, `E`, `R`, `T` y `W`, que ahora son efectos (`W` reinicia):
   - `A`: enciende / apaga la aberración cromática.
   - `E`: abre una ventana de error más (se acumulan). `R`: cierra la más reciente. `T`: un barrido de pantalla (una barra que cae de arriba abajo) que borra todos los errores.
 - Capa de código (arriba a la izquierda): al cambiar de carta teclea la estrofa de esa carta como líneas de código; la línea en blanco entre estrofas se respeta. La letra no está en el repositorio: pégala en `public/letra.txt` (una línea en blanco entre estrofas, 38 en total) y cada carta teclea la suya (`src/cards/lyrics.js` dice cuál). Sin ese archivo se usa el verso corto de cada carta.
