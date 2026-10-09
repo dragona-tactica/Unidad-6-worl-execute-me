@@ -78,6 +78,14 @@ export function createCodeLayer(parent) {
     type(text) {
       queue(Array.isArray(text) ? text : text ? [text] : []);
     },
+    // back to an empty editor
+    clear() {
+      pending.length = 0;
+      lines.length = 0;
+      current = null;
+      lineNo = 0;
+      box.innerHTML = '';
+    },
     release() {
       if (lines.length || pending.length) pending.push(['', '', '']);
       pending.push(['signal.', 'release', '();']);

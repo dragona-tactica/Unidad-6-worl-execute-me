@@ -67,7 +67,7 @@ async function main() {
   hud.innerHTML = `
     <div id="status">señal</div>
     <div id="keys">${SET.map((c, i) => `<span><b>${i + 1}</b> ${c.short ?? c.label}${c.key ? ` <i>${KEYNAME(c.key)}</i>` : ''}</span>`).join('')}</div>
-    <div id="hints"><b>espacio</b> siguiente (la primera vez oculta estas indicaciones) · <b>⌫</b> anterior · <b>supr</b> disolver en señal · <b>/</b> mostrar u ocultar indicaciones · <b>A</b> aberración cromática · <b>E</b> + error · <b>R</b> − error · <b>T</b> barrido que borra los errores · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
+    <div id="hints"><b>espacio</b> siguiente (la primera vez oculta estas indicaciones) · <b>⌫</b> anterior · <b>supr</b> disolver en señal · <b>inicio</b> reiniciar todo · <b>/</b> mostrar u ocultar indicaciones · <b>A</b> aberración cromática · <b>E</b> + error · <b>R</b> − error · <b>T</b> barrido que borra los errores · <b>← →</b> giro · <b>↑ ↓</b> torcer el campo · <b>shift</b> turbulencia · <b>&#96;</b> vertical hold · <b>enter</b> pantalla completa</div>`;
   document.body.append(hud);
   const status = hud.querySelector('#status');
 
@@ -113,6 +113,15 @@ async function main() {
       if (step > 0) fire(SET[step - 1]);
     }
     if (event.code === 'Delete') letGo();
+    if (event.code === 'Home') {
+      // restart the whole show: first card next, everything cleared
+      player.dissolve();
+      step = -1;
+      aberrationOn = false;
+      errors.clear();
+      code.clear();
+      hud.style.display = '';
+    }
     if (event.code === 'Slash') hud.style.display = hud.style.display === 'none' ? '' : 'none';
     if (event.code === 'KeyA') aberrationOn = !aberrationOn;
     if (event.code === 'KeyE') errors.add();

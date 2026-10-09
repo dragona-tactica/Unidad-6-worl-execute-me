@@ -56,6 +56,9 @@ export function createErrorLayer(parent) {
       layer.append(dialog);
       open.push(dialog);
     },
+    clear() {
+      [...open].forEach(close);
+    },
     removeLast() {
       const dialog = open[open.length - 1];
       if (dialog) close(dialog);
