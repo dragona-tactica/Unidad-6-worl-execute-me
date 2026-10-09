@@ -29,7 +29,7 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `R` | 15 Infinity | el cohete avanza por la curva 1/x |
 | `L` | 17 Switch my current | rayo → AC / DC |
 | `V` | 19 Blind my vision | la mitad superior de la pantalla se desenfoca (confusión / claridad) |
-| `D` | 21 Oh, we can travel | dinosaurio → robot: modelos 3D con sus propios colores |
+| `D` | 21 Oh, we can travel | dinosaurio (entra rápido, grande, y se queda ~1.5 s) → robot: modelos 3D con sus propios colores |
 | `U` | 24 So deeply | modelo 3D del calamar abisal con el submarino (`public/models/abyssal_encounter.glb`), coloreado con la imagen |
 | `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
 | `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |

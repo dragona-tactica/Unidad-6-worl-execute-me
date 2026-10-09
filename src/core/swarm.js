@@ -156,6 +156,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
   mesh.frustumCulled = false;
   scene.add(mesh);
 
+  const baseSpeed = { maxSpeed: params.maxSpeed.value, maxForce: params.maxForce.value, steerGain: params.steerGain.value };
   let hasTargetGoal = 0;
   let resetFrames = 0;
   let morphing = false;
@@ -179,6 +180,13 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     count,
     setBlendTime(seconds) {
       params.blendTime.value = seconds;
+    },
+    // How briskly the agents rush toward their targets (1 = normal). Used by a
+    // stage that has to appear fast.
+    setSpeed(multiplier) {
+      params.maxSpeed.value = baseSpeed.maxSpeed * multiplier;
+      params.maxForce.value = baseSpeed.maxForce * multiplier;
+      params.steerGain.value = baseSpeed.steerGain * multiplier;
     },
     // 0..1: how recently the swarm was told to move (see main.js, afterglow).
     get agitation() {

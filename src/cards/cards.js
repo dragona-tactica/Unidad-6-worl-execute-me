@@ -151,7 +151,8 @@ export const CARDS = [
     key: 'KeyD',
     label: 'D · Dinosaurio → robot humanoide',
     verse: 'Oh, we can travel',
-    stages: [{ figure: 'dino' }, { figure: 'robot_model', at: 1.0 }],
+    // the dinosaur rushes in (speed 1.9) and stays on screen longer before the robot
+    stages: [{ figure: 'dino', speed: 1.9 }, { figure: 'robot_model', at: 1.55 }],
     sweep: 0.85,
     motion: { sway: 0.95 }
   },

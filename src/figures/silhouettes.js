@@ -90,7 +90,7 @@ figures.heart_b = async () => [
 // Models that bring their own colors (and textures): the swarm wears those
 // colors, stretched over the palette. Keys are figure ids.
 const MODELS = {
-  dino: { file: 'dinosaurio.glb', fit: 1.9, rotate: [0, Math.PI / 2, 0], lo: 0.12, hi: 1 },
+  dino: { file: 'dinosaurio.glb', fit: 2.45, rotate: [0, Math.PI / 2, 0], lo: 0.12, hi: 1 },
   robot_model: { file: 'robot.fbx', height: 1.7, lo: 0.12, hi: 1 },
   eggplant_model: { file: 'eggplant.fbx', fit: 1.6, lo: 0.1, hi: 0.9 },
   pills_model: { file: 'pastillas.glb', fit: 2.2, lo: 0.2, hi: 1 },
