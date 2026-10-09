@@ -1,9 +1,11 @@
 import { sampleParts } from './sampling.js';
 import { sampleModel } from './sampleModel.js';
 import { sampleBaked } from './sampleBaked.js';
+import { sampleGLB } from './sampleGLB.js';
+import { drop } from './scenes.js';
 import { sampleAnimated } from './sampleAnimated.js';
 import { rocketBackdrop, sineFrame, sineWaveParts } from './math.js';
-import { loadSilhouette, silhouettePart } from './silhouette.js';
+import { imageTint, loadSilhouette, silhouettePart } from './silhouette.js';
 import { parts, place } from './sampling.js';
 
 const url = (file) => `${import.meta.env.BASE_URL}models/${file}`;
@@ -202,6 +204,66 @@ const bee = async ({ N, rng }) => ({
   source: 'modelo:abeja FDTD'
 });
 
+// 26 · the screens (supplied model, no colors of its own: a height gradient)
+// with fish swimming out of them, as in the reference picture.
+const fish = (x, y, z, turn, s = 1) => [
+  place(parts.ellipsoid({ radii: [0.11, 0.04, 0.025], tint: 0.8 }), { pos: [x, y, z], rot: [0, 0, turn], scale: s, boost: 2.5 }),
+  place(parts.cone({ radius: 0.045, height: 0.09, tint: 0.62 }), {
+    pos: [x - Math.cos(turn) * 0.13 * s, y - Math.sin(turn) * 0.13 * s, z],
+    rot: [0, 0, turn + Math.PI / 2],
+    scale: s,
+    boost: 2.5
+  })
+];
+const FISH = [
+  [-0.75, 0.75, 0.2, 0.5, 1.15], [0.78, 0.82, 0.1, -0.3, 1.0], [-0.85, 0.15, 0.3, 3.3, 1.0],
+  [0.85, 0.3, 0.25, 0.2, 1.1], [-0.6, -0.4, 0.2, 2.7, 0.9], [0.7, -0.35, 0.3, 5.9, 1.0],
+  [-0.2, -0.9, 0.15, 4.4, 0.85], [0.35, -0.85, 0.2, 0.9, 0.95]
+];
+const screens = async ({ N, rng }) => ({
+  points: await compose(
+    [
+      { share: 0.78, build: (n, r) => sampleGLB(url('pantallas.glb'), n, r, { height: 1.75 }), pos: [0, 0, 0] },
+      { share: 0.22, build: async (n, r) => sampleParts(FISH.flatMap(([x, y, z, t, k]) => fish(x, y, z, t, k)), n, r) }
+    ],
+    N,
+    rng
+  ),
+  source: 'modelo:pantallas + peces'
+});
+
+// 56 · the heart (textured model) and the blood it lets fall.
+const heartModel = (lo = 0.1) => (n, r) => sampleModel(url('heart.glb'), n, r, { fit: 1.2, lo, hi: 1 });
+const bloodFigure = (drops, puddle) => async ({ N, rng }) => ({
+  points: await compose(
+    [
+      { share: 0.8, build: heartModel(), pos: [0.05, 0.22, 0] },
+      {
+        share: 0.2,
+        build: async (n, r) => sampleParts([...drops.flatMap(([x, y, k]) => drop(x, y, k)), ...(puddle ? [puddle] : [])], n, r)
+      }
+    ],
+    N,
+    rng
+  ),
+  source: 'modelo:corazón'
+});
+const heartA = bloodFigure([[0.1, -0.2, 1]]);
+const heartB = bloodFigure(
+  [[0.1, -0.5, 1.15], [0.26, -0.38, 0.9], [-0.06, -0.6, 0.8]],
+  place(parts.disc({ radius: 0.34, tint: 0.5 }), { pos: [0.1, -0.7, 0], scale: [1, 0.18, 1], boost: 1.2 })
+);
+
+// 59 · the gavel: no colors in the file, so they come from the reference
+// picture, projected onto the model like the cat.
+const gavel = async ({ N, rng }) => {
+  const sil = await loadSilhouette('gavel');
+  return {
+    points: await sampleGLB(url('mazo.glb'), N, rng, { height: 1.2, tintFn: imageTint(sil, { lo: 0.12, hi: 1 }) }),
+    source: 'modelo:mazo + imagen'
+  };
+};
+
 export const modelScenes = {
   radio_model: model('vintage_radio.glb', { fit: 2.1, lo: 0.15 }),
   boy_model: model('boy_girl.glb', { height: 1.9, only: BOY, lo: 0.12 }),
@@ -221,5 +283,9 @@ export const modelScenes = {
   sine_scene_moving: sineScene(true),
   warrior_model: warrior,
   camels_desert: camelsInDesert,
-  bee_model: bee
+  bee_model: bee,
+  screens_model: screens,
+  heart_model_a: heartA,
+  heart_model_b: heartB,
+  gavel_model: gavel
 };

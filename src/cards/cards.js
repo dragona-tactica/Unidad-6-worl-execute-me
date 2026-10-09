@@ -175,9 +175,9 @@ export const CARDS = [
         id: 'simulations',
     short: 'pantallas',
     key: 'KeyA',
-    label: 'A · Pantallas y simulaciones saliendo de ellas',
+    label: 'A · Pantallas con peces saliendo de ellas (modelo 3D)',
     verse: 'Give you all the simulations',
-    stages: [{ figure: 'computer' }],
+    stages: [{ figure: 'screens_model' }],
     motion: { sway: 0.4 }
   },
   {
@@ -344,9 +344,9 @@ export const CARDS = [
     id: 'heart',
     short: 'corazón',
     key: 'Digit8',
-    label: '8 · El corazón sangrando',
+    label: '8 · El corazón sangrando (modelo 3D)',
     verse: "You won't leave me so disheartened",
-    stages: [{ figure: 'heart_a' }, { figure: 'heart_b', at: 0.8 }],
+    stages: [{ figure: 'heart_model_a' }, { figure: 'heart_model_b', at: 0.8 }],
     sweep: 0.7,
     motion: { sway: 0.25 }
   },
@@ -363,9 +363,9 @@ export const CARDS = [
     id: 'gavel',
     short: 'mazo',
     key: 'Digit0',
-    label: '0 · El mazo de las leyes',
+    label: '0 · El mazo de las leyes (modelo 3D)',
     verse: 'Illegal arguments',
-    stages: [{ figure: 'gavel' }],
+    stages: [{ figure: 'gavel_model' }],
     motion: { sway: 0.3 }
   },
   {
