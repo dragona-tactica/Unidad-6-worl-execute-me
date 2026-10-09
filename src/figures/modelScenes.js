@@ -1,6 +1,8 @@
 import { sampleParts } from './sampling.js';
 import { sampleModel } from './sampleModel.js';
 import { sampleBaked } from './sampleBaked.js';
+import { sampleAnimated } from './sampleAnimated.js';
+import { rocketBackdrop, sineFrame, sineWaveParts } from './math.js';
 import { loadSilhouette, silhouettePart } from './silhouette.js';
 import { parts, place } from './sampling.js';
 
@@ -39,7 +41,7 @@ async function compose(items, N, rng) {
 
 // train_cat.glb is a whole sheet of props (lantern, skull, ropes...) spread far
 // apart; only the cat itself is kept.
-const CAT_ONLY = /^Cat_Lowpoly|LowPoly_Cat_Large/;
+const CAT_ONLY = /(^|\/)Cat_Lowpoly|LowPoly_Cat_Large/;
 const catModel = (opts = {}) => (n, rng) => sampleModel(url('train_cat.glb'), n, rng, { fit: 1.9, only: CAT_ONLY, lo: 0.12, hi: 1, ...opts });
 const trainModel = (opts = {}) => (n, rng) => sampleModel(url('tren.glb'), n, rng, { fit: 1.9, lo: 0.2, hi: 1, ...opts });
 
@@ -104,6 +106,102 @@ const guillotine = (drop) => async ({ N, rng }) => {
   return { points, source: 'modelo:guillotine.glb' };
 };
 
+// Marks parts as MOVING (see core/swarm.js): +2 rides the rigid motion, +4
+// slides along x and wraps. Their agents keep chasing the moving target.
+const flag = (list, offset) =>
+  list.flat(Infinity).map((part) => ({
+    weight: part.weight,
+    sample: (rng) => {
+      const q = part.sample(rng);
+      q[3] += offset;
+      return q;
+    }
+  }));
+
+// 15 · the rocket flies along 1/x. The model is built ONCE, nose along +x, and
+// the card moves it (rocketPath) — it is never re-formed.
+const rocketScene = async ({ N, rng }) => ({
+  points: await compose(
+    [
+      { share: 0.4, build: async (n, r) => sampleParts(rocketBackdrop(), n, r) },
+      {
+        share: 0.6,
+        build: async (n, r) => {
+          const pts = await sampleModel(url('rocket.glb'), n, r, { fit: 0.8, rotate: [0, 0, -Math.PI / 2], skip: /PISO/, lo: 0.15 });
+          for (let i = 0; i < n; i++) pts[i * 4 + 3] += 2;
+          return pts;
+        }
+      }
+    ],
+    N,
+    rng
+  ),
+  source: 'modelo:cohete + curva 1/x'
+});
+
+// 13 · the sine wave travels along its frame (nothing is re-formed).
+const sineScene = (withFrame) => async ({ N, rng }) => ({
+  points: sampleParts([...flag(sineWaveParts(), 4), ...(withFrame ? sineFrame() : [])], N, rng),
+  source: 'procedural'
+});
+
+// 57 · the mouse warrior in a fighting stance. The model is static (no
+// skeleton), so the pose is built by leaning the whole body into the fight
+// and swinging the spear forward around the hand that holds it.
+const warrior = model('mouse_warrior.glb', {
+  fit: 2.1,
+  lo: 0.12,
+  poses: [
+    { match: /spear/, rotate: [1.0, 0, -0.18], pivot: [0.75, -0.2, 0.4] },
+    { match: /./, rotate: [0.16, 0, 0], pivot: [0, -1.0, 0] }
+  ]
+});
+
+// 53 · three camels walking in the desert, with the animation the model carries.
+const CAMELS = [
+  { pos: [-0.8, -0.05, 0.4], scale: 0.92, phase: 0 },
+  { pos: [0.05, -0.05, -0.15], scale: 1.0, phase: 0.34 },
+  { pos: [0.85, -0.05, 0.5], scale: 0.86, phase: 0.67 }
+];
+const camelsInDesert = async ({ N, rng }) => {
+  const scenery = Math.round(N * 0.22);
+  const per = Math.floor((N - scenery) / CAMELS.length);
+  const walk = await sampleAnimated(url('camel.glb'), per, rng, { frames: 60, fit: 0.78, rotate: [0, 0, 0], lo: 0.12 });
+  const dunes = await silhouettePart(await loadSilhouette('desert'), { fit: 2.8, lo: 0.3, hi: 0.8, pos: [0, 0.35, -0.9], depth: 0.06 });
+  const ground = [
+    place(parts.triangle([-1.6, -0.5, -1.1], [1.6, -0.5, -1.1], [0.4, 0.75, -1.1], 0.72), { boost: 0.3 }),
+    place(parts.box({ size: [2.8, 0.03, 1.6], tint: 0.85 }), { pos: [0, -0.47, 0.1], boost: 0.8 })
+  ];
+  const total = per * CAMELS.length;
+  const points = new Float32Array(N * 4);
+  const still = sampleParts([dunes, ...ground], N - total, rng);
+  points.set(still, total * 4);
+  CAMELS.forEach((camel, c) => {
+    for (let n = 0; n < per; n++) points[(c * per + n) * 4 + 3] = walk.tint[n];
+  });
+  const K = walk.frames.length;
+  const fill = (frame, array) => {
+    CAMELS.forEach((camel, c) => {
+      const src = walk.frames[(frame + Math.round(camel.phase * K)) % K];
+      for (let n = 0; n < per; n++) {
+        const o = (c * per + n) * 4;
+        array[o] = src[n * 3] * walk.scale * camel.scale + camel.pos[0];
+        array[o + 1] = src[n * 3 + 1] * walk.scale * camel.scale + camel.pos[1] - 0.05;
+        array[o + 2] = src[n * 3 + 2] * walk.scale * camel.scale + camel.pos[2];
+      }
+    });
+  };
+  fill(0, points);
+  return { points, animation: { fill, fps: K / walk.duration }, source: 'modelo:camello animado ×3' };
+};
+
+// 28 · the FDTD bumblebee simulation (tools/bake_bee.py): the heat map of the
+// field becomes the swarm's colors, hot parts bright.
+const bee = async ({ N, rng }) => ({
+  points: await sampleBaked(url('bee.bin'), N, rng, { fit: 2.2, rotate: 0, tintFn: (heat) => 0.06 + 0.94 * (heat / 255) }),
+  source: 'modelo:abeja FDTD'
+});
+
 export const modelScenes = {
   radio_model: model('vintage_radio.glb', { fit: 2.1, lo: 0.15 }),
   boy_model: model('boy_girl.glb', { height: 1.9, only: BOY, lo: 0.12 }),
@@ -117,5 +215,11 @@ export const modelScenes = {
   cat_train_a: catAndTrain(-0.75),
   cat_train_b: catAndTrain(0.75),
   train_desert: trainAlone,
-  bird
+  bird,
+  rocket_scene: rocketScene,
+  sine_wave_moving: sineScene(false),
+  sine_scene_moving: sineScene(true),
+  warrior_model: warrior,
+  camels_desert: camelsInDesert,
+  bee_model: bee
 };

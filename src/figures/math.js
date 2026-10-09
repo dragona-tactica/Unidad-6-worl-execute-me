@@ -12,8 +12,10 @@ export const sineOnly = () => wave();
 
 // The oscilloscope graticule that holds the wave: a frame, a dotted grid
 // and the two center axes with their ticks.
-export function sineGrid() {
-  const list = wave();
+export const sineGrid = () => [...wave(), ...sineFrame()];
+export const sineWaveParts = wave;
+export function sineFrame() {
+  const list = [];
   const X = 1.02;
   const Y = 0.72;
   list.push(
@@ -74,7 +76,23 @@ function rocketAt(x) {
   return group(rocket(), { pos: [x, K / x, 0.02], rot: [0, 0, angle], scale: 1.05 });
 }
 
-const rocketScene = (x) => group([...hyperbola(1), ...hyperbola(-1), ...axes(), ...rocketAt(x)], { pos: [0, -0.12, 0], scale: 0.8 });
+const SCENE = { pos: [0, -0.12, 0], scale: 0.8 };
+const rocketScene = (x) => group([...hyperbola(1), ...hyperbola(-1), ...axes(), ...rocketAt(x)], SCENE);
+
+// The curve and its axes alone (the rocket model flies over them).
+export const rocketBackdrop = () => group([...hyperbola(1), ...hyperbola(-1), ...axes()], SCENE);
+
+// Where the rocket is, and which way its nose points, a fraction s (0..1) of
+// the way up the right branch of 1/x. Same scene transform as the backdrop.
+export function rocketPath(s) {
+  const e = s * s * (3 - 2 * s); // ease in/out
+  const x = 0.85 - 0.6 * e;
+  const y = K / x;
+  return {
+    pos: [x * SCENE.scale + SCENE.pos[0], y * SCENE.scale + SCENE.pos[1], 0.03],
+    rot: Math.atan2(K / (x * x), -1)
+  };
+}
 export const rocketStart = () => rocketScene(0.8);
 export const rocketMid = () => rocketScene(0.45);
 export const rocketEnd = () => rocketScene(0.27);

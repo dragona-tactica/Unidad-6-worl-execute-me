@@ -25,14 +25,14 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `C` | 08 The simulation | las líneas de campo con su garganta (sin animación) |
 | `P` | 09 Set of point | punto → plano con curva → "POINT OF INFLECTION" |
 | `O` | 11 Circle | rodaja de naranja con triángulo punteado y `C = 2πr` |
-| `N` | 13 Sine wave | la onda → las líneas que la contienen |
-| `R` | 15 Infinity | el cohete avanza por la curva 1/x |
+| `N` | 13 Sine wave | la onda ya formada se desliza por la cuadrícula (los mismos agentes, sin regenerarse) |
+| `R` | 15 Infinity | el cohete (modelo 3D) vuela ya formado por la curva 1/x |
 | `L` | 17 Switch my current | rayo → AC / DC |
 | `V` | 19 Blind my vision | la mitad superior de la pantalla se desenfoca (confusión / claridad) |
 | `D` | 21 Oh, we can travel | dinosaurio (entra rápido, grande, y se queda ~1.5 s) → robot: modelos 3D con sus propios colores |
 | `U` | 24 So deeply | modelo 3D del calamar abisal con el submarino (`public/models/abyssal_encounter.glb`), coloreado con la imagen |
 | `A` | 26 All the simulations | pantallas y peces saliendo de ellas |
-| `Y` | 28 Only satisfaction | cabeza con gafas de realidad virtual |
+| `Y` | 28 Only satisfaction | la abeja de la simulación FDTD (mapa de calor como color; `tools/bake_bee.py`) |
 | `Z` | 29 Make you happy | pájaro feliz: modelo 3D (esculpido de 40 MB convertido a nube de puntos con `tools/bake_points.py`) |
 | `J` | 31 Though we are trapped | trampa para osos: modelo 3D |
 | `B` | 33 Eggplant | berenjena → pastillas: modelos 3D con sus propios colores |
@@ -46,10 +46,10 @@ dispara con **una sola tecla**. Todas usan la paleta de `Paleta de colores.jpg`
 | `3` | 49 Feel your vibrations | seis placas vibran, una a una |
 | `4` | 50 Finally be completion | se completa el rompecabezas |
 | `5` | 52 You have left | el gato con el tren que pasa detrás: modelos 3D |
-| `6` | 53 In isolation | el tren solo en el desierto: modelo 3D |
+| `6` | 53 In isolation | tres camellos caminando por el desierto, con la animación del modelo |
 | `7` | 54 Pointless fragments | el espejo roto: modelo 3D |
 | `8` | 56 Disheartened | el corazón sangrando |
-| `9` | 57 Challenging your God | el guerrero |
+| `9` | 57 Challenging your God | el ratón guerrero en pose de combate: modelo 3D |
 | `0` | 59 Illegal arguments | el mazo |
 | `−` | 60 Execution | la guillotina: modelo 3D; el filo cae |
 | `=` | 61 Ein, dos | la cuenta del uno al seis en varios idiomas |

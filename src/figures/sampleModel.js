@@ -16,7 +16,11 @@ import { loadModel } from './loadModel.js';
 //   only, skip RegExps tested against each mesh's name to keep / drop parts
 //   offsets    [{ match: RegExp, by: [x, y, z] }] moves matching meshes (raw model
 //              units, before centering) — e.g. to drop a guillotine blade
-//   normalize  false keeps the raw size/position (used when composing models)
+//   poses      [{ match: RegExp, rotate: [x, y, z], pivot: [x, y, z] }] bends a rigid
+//              part around a pivot (raw model units); rules apply in order. A
+//              static model has no skeleton, so a pose is built by tilting parts.
+//   The name tests (`only`, `skip`, `offsets`, `poses`) see the whole chain of
+//   names from the root to the mesh, e.g. "PISO/defaultMaterial".
 const toLinear = new Float32Array(256).map((_, i) => {
   const c = i / 255;
   return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -37,13 +41,31 @@ function textureData(texture) {
   return textures.get(texture);
 }
 
-function collect(root, { only, skip, offsets = [] } = {}) {
+const chainName = (node) => {
+  const names = [];
+  for (let n = node; n; n = n.parent) if (n.name) names.unshift(n.name);
+  return names.join('/');
+};
+
+function collect(root, { only, skip, offsets = [], poses = [] } = {}) {
   const tris = []; // { mesh data per triangle chunk }
   root.traverse((node) => {
     if (!node.isMesh) return;
-    if (only && !only.test(node.name)) return;
-    if (skip && skip.test(node.name)) return;
-    const shift = offsets.filter((o) => o.match.test(node.name)).reduce((acc, o) => [acc[0] + o.by[0], acc[1] + o.by[1], acc[2] + o.by[2]], [0, 0, 0]);
+    const name = chainName(node);
+    if (only && !only.test(name)) return;
+    if (skip && skip.test(name)) return;
+    const shift = offsets.filter((o) => o.match.test(name)).reduce((acc, o) => [acc[0] + o.by[0], acc[1] + o.by[1], acc[2] + o.by[2]], [0, 0, 0]);
+    // every pose rule that matches becomes one matrix: rotate about its pivot
+    const poseMatrix = new THREE.Matrix4();
+    for (const rule of poses) {
+      if (!rule.match.test(name)) continue;
+      const pivot = new THREE.Vector3(...rule.pivot);
+      const turn = new THREE.Matrix4()
+        .makeTranslation(pivot.x, pivot.y, pivot.z)
+        .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(...rule.rotate)))
+        .multiply(new THREE.Matrix4().makeTranslation(-pivot.x, -pivot.y, -pivot.z));
+      poseMatrix.premultiply(turn);
+    }
     const geometry = node.geometry;
     const pos = geometry.attributes.position;
     const uv = geometry.attributes.uv;
@@ -61,7 +83,7 @@ function collect(root, { only, skip, offsets = [] } = {}) {
       for (let t = 0; t < count; t++) {
         for (let k = 0; k < 3; k++) {
           const i = index ? index.getX(g.start + t * 3 + k) : g.start + t * 3 + k;
-          v.fromBufferAttribute(pos, i).applyMatrix4(node.matrixWorld);
+          v.fromBufferAttribute(pos, i).applyMatrix4(node.matrixWorld).applyMatrix4(poseMatrix);
           chunk.p[t * 9 + k * 3] = v.x + shift[0];
           chunk.p[t * 9 + k * 3 + 1] = v.y + shift[1];
           chunk.p[t * 9 + k * 3 + 2] = v.z + shift[2];

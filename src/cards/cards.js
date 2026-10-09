@@ -1,3 +1,5 @@
+import { rocketPath } from '../figures/math.js';
+
 // THE CARDS — one per visual metaphor of the song, in verse order.
 //
 // A card is performed with ONE keypress. `stages` is the list of figures the
@@ -110,20 +112,24 @@ export const CARDS = [
     id: 'sine',
     short: 'onda',
     key: 'KeyN',
-    label: 'N · La onda y las líneas que la contienen',
+    label: 'N · La onda viaja por su cuadrícula',
     verse: "If I'm a sine wave",
-    stages: [{ figure: 'sine' }, { figure: 'sine_grid', at: 0.8 }],
+    stages: [{ figure: 'sine_wave_moving' }, { figure: 'sine_scene_moving', at: 0.8 }],
     sweep: 0.7,
+    // the wave that was formed keeps sliding along x (it wraps around)
+    mover: { waveSpeed: 0.5 },
     motion: { sway: 0.3 }
   },
   {
     id: 'rocket',
     short: 'cohete',
     key: 'KeyR',
-    label: 'R · El cohete avanza por la curva hacia el infinito',
+    label: 'R · El cohete avanza por la curva hacia el infinito (modelo 3D)',
     verse: 'If I approach infinity',
-    stages: [{ figure: 'rocket_start' }, { figure: 'rocket_mid', at: 0.7, sweep: 0.45 }, { figure: 'rocket_end', at: 1.45, sweep: 0.45 }],
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'rocket_scene' }],
+    // formed once; then it FLIES along 1/x (nothing is rebuilt)
+    mover: { path: rocketPath, duration: 2.6, delay: 0.7 },
+    motion: { sway: 0.28 }
   },
   {
     id: 'current',
@@ -176,12 +182,12 @@ export const CARDS = [
   },
   {
     id: 'vr',
-    short: 'cabeza VR',
+    short: 'abeja',
     key: 'KeyY',
-    label: 'Y · Una cabeza con gafas de realidad virtual',
+    label: 'Y · La abeja de la simulación FDTD (modelo 3D)',
     verse: 'Be your only satisfaction',
-    stages: [{ figure: 'vr_head' }],
-    motion: { sway: 0.5 }
+    stages: [{ figure: 'bee_model' }],
+    motion: { sway: 0.95 }
   },
   {
     id: 'fox',
@@ -318,12 +324,12 @@ export const CARDS = [
   },
   {
     id: 'isolation',
-    short: 'tren en el desierto',
+    short: 'camellos',
     key: 'Digit6',
-    label: '6 · El tren solo en el desierto (modelo 3D)',
+    label: '6 · Tres camellos caminan solos por el desierto (modelo animado)',
     verse: 'You have left me in isolation',
-    stages: [{ figure: 'train_desert' }],
-    motion: { sway: 0.7 }
+    stages: [{ figure: 'camels_desert' }],
+    motion: { sway: 0.55 }
   },
   {
     id: 'fragments',
@@ -346,12 +352,12 @@ export const CARDS = [
   },
   {
     id: 'warden',
-    short: 'guerrero',
+    short: 'ratón guerrero',
     key: 'Digit9',
-    label: '9 · El guerrero desafía a tu dios',
+    label: '9 · El ratón guerrero en pose de combate (modelo 3D)',
     verse: 'Challenging your God',
-    stages: [{ figure: 'warden' }],
-    motion: { sway: 0.3 }
+    stages: [{ figure: 'warrior_model' }],
+    motion: { sway: 0.8 }
   },
   {
     id: 'gavel',

@@ -134,7 +134,7 @@ async function build(id, N) {
   if (make) {
     const made = await make({ N, rng });
     // a builder may hand back ready-made points (a model sampled in 3D)
-    if (made?.points) return { points: made.points, source: made.source ?? 'procedural' };
+    if (made?.points) return { points: made.points, source: made.source ?? 'procedural', animation: made.animation };
     return { points: sampleParts(made, N, rng), source: 'procedural' };
   }
 

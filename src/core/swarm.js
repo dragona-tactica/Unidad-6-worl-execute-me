@@ -67,8 +67,8 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
 
   const update = Fn(() => {
     const i = instanceIndex;
-    const p0 = positions.element(i);
-    const v0 = velocities.element(i);
+    const p0r = positions.element(i);
+    const v0r = velocities.element(i);
     const b0 = blends.element(i);
     const tA = targetA.element(i);
     const tB = targetB.element(i);
@@ -95,11 +95,39 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     const blend = select(params.blendReset.greaterThan(0.5), 0.0, moved);
     const eased = smoothstep(0.0, 1.0, blend);
 
+    // Parts that MOVE once formed. A target's tint carries a "kind": 0..1 is a
+    // still point, 2..3 rides the rigid motion (a rocket flying along a curve),
+    // 4..5 slides along x and wraps (a wave that travels). The agents simply
+    // keep chasing their moving target — nothing is rebuilt.
+    const kindOf = (w) => w.add(0.01).div(2.0).floor();
+    const place = (t) => {
+      const kind = kindOf(t.w);
+      const c = cos(params.moverRot);
+      const s = sin(params.moverRot);
+      const rigid = vec3(t.x.mul(c).sub(t.y.mul(s)), t.x.mul(s).add(t.y.mul(c)), t.z).add(params.moverPos);
+      const slid = t.x.add(params.moverShift).add(1.0);
+      const wave = vec3(slid.sub(slid.div(2.0).floor().mul(2.0)).sub(1.0), t.y, t.z);
+      return select(kind.equal(1.0), rigid, select(kind.equal(2.0), wave, t.xyz));
+    };
+    const tintA = tA.w.sub(kindOf(tA.w).mul(2.0));
+    const tintB = tB.w.sub(kindOf(tB.w).mul(2.0));
+
+    // A wave point that wraps around the edge hops over to the other side
+    // instead of flying across the whole screen.
+    const wrapX = (t, shift) => {
+      const slid = t.x.add(shift).add(1.0);
+      return slid.sub(slid.div(2.0).floor().mul(2.0)).sub(1.0);
+    };
+    const hopped = (t) => kindOf(t.w).equal(2.0).and(wrapX(t, params.moverShift).sub(wrapX(t, params.moverShiftPrev)).abs().greaterThan(1.0));
+    const wraps = hopped(tA).or(hopped(tB));
+
     // The assigned target, spun in 3D by the performer's rotation.
-    const local = mix(tA.xyz, tB.xyz, eased).mul(params.figureScale);
+    const local = mix(place(tA), place(tB), eased).mul(params.figureScale);
     const world = rotX(rotY(local, params.rotY), params.tiltX);
     const alive = flow.direction(world.mul(1.7)).mul(params.shimmer);
     const target = world.add(alive);
+    const p0 = select(wraps, target, p0r);
+    const v0 = select(wraps, vec3(0.0), v0r);
 
     // PERCEPTION: flow under my feet, and the vector to my target.
     const f = flow.direction(p0);
@@ -132,7 +160,7 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     // With no figure the agents are bright TV snow (random walk along the
     // palette); the figure's own colors take over as hasTarget rises.
     const snow = ramp(rndSpeed.mul(0.65).add(0.35));
-    colors.element(i).assign(mix(snow, mix(ramp(tA.w), ramp(tB.w), eased), params.hasTarget));
+    colors.element(i).assign(mix(snow, mix(ramp(tintA), ramp(tintB), eased), params.hasTarget));
   })().compute(count).setName('Swarm update');
 
   // RENDER ------------------------------------------------------------
@@ -157,6 +185,9 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
   scene.add(mesh);
 
   const baseSpeed = { maxSpeed: params.maxSpeed.value, maxForce: params.maxForce.value, steerGain: params.steerGain.value };
+  let animation = null; // { fill(frame, array), fps } — targets that walk (animated models)
+  let animClock = 0;
+  let animFrame = -1;
   let hasTargetGoal = 0;
   let resetFrames = 0;
   let morphing = false;
@@ -183,6 +214,13 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     },
     // How briskly the agents rush toward their targets (1 = normal). Used by a
     // stage that has to appear fast.
+    // Rigid motion / wave shift of the moving parts (see params.moverPos).
+    setMover(pos = [0, 0, 0], rot = 0, shift = 0) {
+      params.moverPos.value.set(pos[0], pos[1], pos[2]);
+      params.moverRot.value = rot;
+      params.moverShiftPrev.value = params.moverShift.value;
+      params.moverShift.value = shift;
+    },
     setSpeed(multiplier) {
       params.maxSpeed.value = baseSpeed.maxSpeed * multiplier;
       params.maxForce.value = baseSpeed.maxForce * multiplier;
@@ -195,6 +233,9 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     // A card starts: the whole swarm flows to this figure.
     begin(figure) {
       agitation = 1;
+      animation = figure.animation ?? null;
+      animClock = 0;
+      animFrame = -1;
       targetAData.array.set(figure.points);
       targetAData.needsUpdate = true;
       targetBData.array.set(figure.points);
@@ -220,12 +261,24 @@ export async function createSwarm({ renderer, scene, params, flow, count }) {
     },
     // Let go of the figure: agents go back to drifting on the flow field.
     release() {
+      animation = null;
       params.transformT.value = -1;
       morphing = false;
       hasTargetGoal = 0;
     },
     update(dt) {
       params.dt.value = dt;
+      if (animation) {
+        animClock += dt;
+        const frame = Math.floor(animClock * animation.fps);
+        if (frame !== animFrame) {
+          animFrame = frame;
+          animation.fill(frame, targetAData.array);
+          animation.fill(frame, targetBData.array);
+          targetAData.needsUpdate = true;
+          targetBData.needsUpdate = true;
+        }
+      }
       agitation = Math.max(0, agitation - dt / 1.1);
       params.hasTarget.value += (hasTargetGoal - params.hasTarget.value) * (1 - Math.exp(-dt * 6.0));
       if (morphing) {

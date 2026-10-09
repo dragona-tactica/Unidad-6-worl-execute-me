@@ -54,6 +54,7 @@ export function createCardPlayer({ swarm, count, onStatus }) {
       elapsed = 0;
       nextStage = 1;
       swarm.setBlendTime(card.blendTime ?? 0.4);
+      swarm.setMover();
       swarm.setSpeed(card.stages[0].speed ?? 1);
       swarm.begin(figures[0]);
       const sources = [...new Set(loaded.map((f) => f.source))].join(', ');
@@ -64,6 +65,7 @@ export function createCardPlayer({ swarm, count, onStatus }) {
       token++;
       active = null;
       swarm.setSpeed(1);
+      swarm.setMover();
       swarm.release();
       onStatus?.('señal');
     },
@@ -71,6 +73,13 @@ export function createCardPlayer({ swarm, count, onStatus }) {
     update(dt) {
       if (!active) return;
       elapsed += dt;
+      // Parts that were formed once and now MOVE: a flight path for a rigid
+      // part, and/or a steady slide for a wave. Nothing is rebuilt.
+      const mover = active.mover;
+      if (mover) {
+        const flight = mover.path ? mover.path(Math.min(1, Math.max(0, (elapsed - (mover.delay ?? 0)) / mover.duration))) : null;
+        swarm.setMover(flight?.pos, flight?.rot ?? 0, (mover.waveSpeed ?? 0) * Math.max(0, elapsed - (mover.delay ?? 0)));
+      }
       while (nextStage < active.stages.length && elapsed >= active.stages[nextStage].at) {
         const stage = active.stages[nextStage];
         swarm.setSpeed(stage.speed ?? 1);

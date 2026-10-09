@@ -24,7 +24,9 @@ function specularGlossinessDiffuse(parser) {
   };
 }
 
-export async function loadModel(url) {
+// With `keepAnimations` the whole glTF result is returned ({ scene, animations })
+// instead of just the scene.
+export async function loadModel(url, { keepAnimations = false } = {}) {
   const ext = url.split('?')[0].split('.').pop().toLowerCase();
   let root;
   if (ext === 'fbx') {
@@ -32,7 +34,10 @@ export async function loadModel(url) {
   } else {
     const loader = new GLTFLoader();
     loader.register(specularGlossinessDiffuse);
-    root = (await loader.loadAsync(url)).scene;
+    const gltf = await loader.loadAsync(url);
+    root = gltf.scene;
+    root.updateMatrixWorld(true);
+    if (keepAnimations) return gltf;
   }
   root.updateMatrixWorld(true);
   return root;

@@ -43,6 +43,13 @@ export function createParams() {
     transformT: uniform(-1.0), // seconds since the sweep began, -1 = not started
     sweep: uniform(0.7), // seconds it takes the sweep to cross the whole figure
     blendReset: uniform(0.0),
+    // Moving parts of a figure (see swarm.js): tint 2..3 marks agents that ride a
+    // rigid motion (moverPos + a turn around z), tint 4..5 agents that slide along x
+    // and wrap around (a traveling wave).
+    moverPos: uniform(new THREE.Vector3(0, 0, 0)),
+    moverRot: uniform(0.0),
+    moverShift: uniform(0.0),
+    moverShiftPrev: uniform(0.0),
     blendTime: uniform(0.4), // seconds one agent takes to switch from stage A to B
     sweepMode: uniform(0.0), // 0 top-down · 1 angle around sweepCenter (by A) · 2 same, by B
     sweepCenter: uniform(new THREE.Vector2(0, 0)),
